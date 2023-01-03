@@ -1,0 +1,58 @@
+name: save_my_food
+description: Food inventory application for reducing spendings on food
+
+# Prevent accidental publishing to pub.dev
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  flutter_native_splash: ^2.2.13
+  provider: ^6.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Configured in analysis_options.yaml
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/font/
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/font/Inter-Light.otf
+          weight: 300
+        - asset: assets/font/Inter-Regular.otf
+          weight: 400
+        - asset: assets/font/Inter-Medium.otf
+          weight: 500
+        - asset: assets/font/Inter-SemiBold.otf
+          weight: 600
+        - asset: assets/font/Inter-Bold.otf
+          weight: 700
+
+flutter_native_splash:
+  color: '#FF6C6C'
+  image: assets/images/logo.png
+
+  android_12:
+    image: assets/images/logo.png
+    icon_background_color: '#FF6C6C'
+
+  android_gravity: center
+
+  web: false
