@@ -13,18 +13,18 @@ class Heading extends StatelessWidget {
 
 class NormalText extends StatelessWidget {
   final String value;
-  final Color? color;
+  final Color color;
   final TextAlign? align;
-  final FontWeight? weight;
+  final FontWeight weight;
   final double? height;
   final double? size;
 
   const NormalText(
     this.value, {
     Key? key,
-    this.color,
+    this.color = Colors.black,
     this.align,
-    this.weight,
+    this.weight = FontWeight.w400,
     this.height,
     this.size,
   }) : super(key: key);

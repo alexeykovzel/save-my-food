@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum HexColor { red, pink, lightPink, green, yellow, gray }
+enum HexColor { red, pink, lightPink, green, yellow, gray, lightGray }
 
 extension HexColorValues on HexColor {
   get() => Color(value());
@@ -19,6 +19,8 @@ extension HexColorValues on HexColor {
         return 0xFFE5DD16;
       case HexColor.gray:
         return 0xFFC0C0C0;
+      case HexColor.lightGray:
+        return 0xFFD9D9D9;
     }
   }
 }
@@ -29,7 +31,8 @@ ThemeData buildTheme() {
     fontFamily: 'Inter',
     primaryColor: HexColor.pink.get(),
     textTheme: const TextTheme(
-      bodyText2: TextStyle(fontSize: 16),
+      bodyText2: TextStyle(fontSize: 18),
+      button: TextStyle(fontSize: 18),
     ),
     colorScheme: ColorScheme(
       brightness: Brightness.light,

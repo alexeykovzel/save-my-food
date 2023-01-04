@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:save_my_food/common/text.dart';
+import 'package:save_my_food/features/food_inventory.dart';
 import 'package:save_my_food/theme.dart';
 
+import 'product.dart';
+import 'profile.dart';
+
 class WidgetsPage extends StatelessWidget {
-  const WidgetsPage({Key? key}) : super(key: key);
+  final Function(int) navigateTo;
+
+  const WidgetsPage({Key? key, required this.navigateTo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Profile profile = context.read<Profile>();
     return Container(
       color: HexColor.pink.get(),
       padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
@@ -35,15 +43,48 @@ class WidgetsPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          const NormalWidget(
+          NormalWidget(
             text: 'Products that expire soon:',
-            children: [],
+            children: [
+              const SizedBox(height: 15),
+              ...profile.expireSoon
+                  .map((product) => ExpiresSoonItem(product: product))
+            ],
           ),
           const SizedBox(height: 20),
           const NormalWidget(
             text: 'Progress quantified:',
-            children: [],
+            children: [
+              SizedBox(height: 15),
+              NormalText(
+                  'You have wasted approx. 1 kg of food items this month.',
+                  size: 16),
+              SizedBox(height: 15),
+              NormalText(
+                  'It would take a tree 2 months to negate this waste. Be more careful with your food waste!',
+                  size: 16),
+            ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class ExpiresSoonItem extends StatelessWidget {
+  final Product product;
+
+  const ExpiresSoonItem({Key? key, required this.product}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+      child: Row(
+        children: [
+          NormalText(product.name, color: Colors.black, size: 16),
+          const Spacer(),
+          DaysLeft(product.daysLeft, scale: 0.8),
         ],
       ),
     );
@@ -69,6 +110,7 @@ class NormalWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             WidgetText(text),
+            ...children,
           ],
         ),
       ),

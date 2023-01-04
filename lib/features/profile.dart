@@ -19,6 +19,8 @@ class Profile with ChangeNotifier {
 
   List<Product> get products => _products;
 
+  List<Product> get expireSoon => _products.sublist(0, 3);
+
   void deleteProduct(Product product) {
     _products.remove(product);
     notifyListeners();

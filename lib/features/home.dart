@@ -14,14 +14,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
+  late final List<Widget> _pages;
 
-  final List<Widget> _pages = [
-    const WidgetsPage(),
-    const ScanReceiptPage(),
-    const FoodInventoryPage(),
-    const SettingsPage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      WidgetsPage(navigateTo: navigateTo),
+      const ScanReceiptPage(),
+      const FoodInventoryPage(),
+      const SettingsPage(),
+    ];
+  }
+
+  void navigateTo(int index) {
+    setState(() => _selectedIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +72,62 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class NormalLayout extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+  final Widget? floating;
+  final EdgeInsets? floatingPadding;
+  final Function()? onClose;
+
+  const NormalLayout({
+    Key? key,
+    required this.title,
+    required this.children,
+    this.floating,
+    this.floatingPadding,
+    this.onClose,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 30, top: 90),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Heading(title),
+              const SizedBox(height: 40),
+              ...children,
+            ],
+          ),
+        ),
+        if (floating != null)
+          Padding(
+            padding: floatingPadding!,
+            child: floating!,
+          ),
+        if (onClose != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 30, top: 40),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: onClose,
+                icon: Icon(
+                  Icons.close,
+                  color: HexColor.pink.get(),
+                  size: 40,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

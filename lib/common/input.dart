@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:save_my_food/common/text.dart';
+import 'package:save_my_food/theme.dart';
 
 class FloatingButton extends StatelessWidget {
   final String text;
@@ -23,7 +24,8 @@ class FloatingButton extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        child: NormalText(text, weight: FontWeight.bold, size: 20),
+        child: NormalText(text,
+            weight: FontWeight.bold, size: 20, color: Colors.white),
       ),
     );
   }
