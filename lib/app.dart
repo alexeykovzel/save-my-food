@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:save_my_food/features/profile.dart';
 import 'package:save_my_food/theme.dart';
 
+import 'features/food_inventory/inventory.dart';
 import 'features/home.dart';
+import 'features/settings/settings.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,7 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => Profile()),
+        ChangeNotifierProvider(create: (_) => Inventory()),
+        ChangeNotifierProvider(create: (_) => Settings()),
       ],
       child: MaterialApp(
         restorationScopeId: 'app',
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
 
         // Configure application navigation
         routes: {
-          '/': (_) => const HomePage(),
+          HomePage.route: (_) => const HomePage(),
         },
       ),
     );

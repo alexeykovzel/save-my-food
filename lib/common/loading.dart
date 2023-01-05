@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:save_my_food/theme.dart';
 
 class LoadingHandler extends StatefulWidget {
   final Widget Function(BuildContext, dynamic) builder;
@@ -30,9 +31,9 @@ class _LoadingHandlerState extends State<LoadingHandler> {
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) =>
-      snapshot.connectionState == ConnectionState.done
-          ? widget.builder(context, snapshot.data)
-          : widget.loading(),
+          snapshot.connectionState == ConnectionState.done
+              ? widget.builder(context, snapshot.data)
+              : widget.loading(),
     );
   }
 }
@@ -47,8 +48,10 @@ class CircularLoading extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: topPadding),
       color: Colors.white,
-      child: const Center(
-        child: CircularProgressIndicator(),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: HexColor.pink.get(),
+        ),
       ),
     );
   }

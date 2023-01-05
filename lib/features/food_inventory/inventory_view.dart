@@ -5,24 +5,58 @@ import 'package:save_my_food/common/text.dart';
 import 'package:save_my_food/features/home.dart';
 import 'package:save_my_food/theme.dart';
 
+import 'inventory.dart';
+import 'new_product.dart';
 import 'product.dart';
-import 'profile.dart';
 
-class FoodInventoryPage extends StatelessWidget {
-  const FoodInventoryPage({Key? key}) : super(key: key);
+class InventoryViewPage extends StatefulWidget {
+  const InventoryViewPage({Key? key}) : super(key: key);
+
+  @override
+  State<InventoryViewPage> createState() => _InventoryViewPageState();
+}
+
+class _InventoryViewPageState extends State<InventoryViewPage> {
+  late final List<Widget> _pages;
+  int _selectedPage = 0;
+
+  void navigateTo(int page) {
+    setState(() => _selectedPage = page);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      FoodInventoryPage(onAddProduct: () => navigateTo(1)),
+      NewProductPage(onClose: () => navigateTo(0)),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Profile>(
+    return _pages[_selectedPage];
+  }
+}
+
+class FoodInventoryPage extends StatelessWidget {
+  final Function() onAddProduct;
+
+  const FoodInventoryPage({
+    Key? key,
+    required this.onAddProduct,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<Inventory>(
       builder: (context, profile, child) => ProductsPage(
         title: 'Food Inventory',
         products: profile.products,
         onItemDelete: profile.deleteProduct,
         floatingButton: FloatingButton(
           text: 'Add product',
-          onPressed: () {
-            // TODO: Navigate to 'new product' page.
-          },
+          onPressed: onAddProduct,
         ),
       ),
     );
@@ -94,6 +128,7 @@ class ProductItem extends StatelessWidget {
         SizedBox(
           width: 50,
           child: IconButton(
+            splashRadius: 22,
             onPressed: onDelete,
             icon: Icon(
               Icons.delete_forever,

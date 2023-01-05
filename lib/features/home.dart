@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:save_my_food/common/text.dart';
-import 'package:save_my_food/features/food_inventory.dart';
-import 'package:save_my_food/features/scan_receipt.dart';
-import 'package:save_my_food/features/settings.dart';
-import 'package:save_my_food/features/widgets.dart';
+import 'package:save_my_food/features/scan_receipt/scan_receipt.dart';
+import 'package:save_my_food/features/settings/settings_view.dart';
+import 'package:save_my_food/features/home_widgets.dart';
 import 'package:save_my_food/theme.dart';
 
+import 'food_inventory/inventory_view.dart';
+
 class HomePage extends StatefulWidget {
+  static const route = '/';
+
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -14,22 +17,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
   late final List<Widget> _pages;
+  int _selectedIndex = 1;
+
+  void navigateTo(int index) {
+    setState(() => _selectedIndex = index);
+  }
 
   @override
   void initState() {
     super.initState();
     _pages = [
-      WidgetsPage(navigateTo: navigateTo),
+      HomeWidgetsPage(
+        onInventory: () => navigateTo(2),
+        onScanReceipt: () => navigateTo(1),
+      ),
       const ScanReceiptPage(),
-      const FoodInventoryPage(),
-      const SettingsPage(),
+      const InventoryViewPage(),
+      const SettingsViewPage(),
     ];
-  }
-
-  void navigateTo(int index) {
-    setState(() => _selectedIndex = index);
   }
 
   @override
@@ -109,7 +115,7 @@ class NormalLayout extends StatelessWidget {
         ),
         if (floating != null)
           Padding(
-            padding: floatingPadding!,
+            padding: floatingPadding ?? EdgeInsets.zero,
             child: floating!,
           ),
         if (onClose != null)

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:save_my_food/common/text.dart';
-import 'package:save_my_food/theme.dart';
 
 class FloatingButton extends StatelessWidget {
   final String text;
@@ -18,14 +17,19 @@ class FloatingButton extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 30),
+          minimumSize: const Size(170, 0),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
         onPressed: onPressed,
-        child: NormalText(text,
-            weight: FontWeight.bold, size: 20, color: Colors.white),
+        child: NormalText(
+          text,
+          weight: FontWeight.bold,
+          color: Colors.white,
+          size: 20,
+        ),
       ),
     );
   }

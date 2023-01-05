@@ -1,31 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:save_my_food/common/text.dart';
 import 'package:save_my_food/features/home.dart';
 import 'package:save_my_food/theme.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+import 'settings.dart';
+
+class SettingsViewPage extends StatelessWidget {
+  const SettingsViewPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Settings settings = context.read<Settings>();
     return NormalLayout(
       title: 'Settings',
       children: [
-        const ToggleSetting(text: 'Remove expired products'),
+        ToggleSetting(
+          text: 'Remove expired products',
+          onChanged: (isOn) => settings.deleteExpired = isOn,
+        ),
         const SizedBox(height: 35),
-        const ToggleSetting(text: 'Turn on notifications'),
+        ToggleSetting(
+          text: 'Turn on notifications',
+          onChanged: (isOn) => settings.notifyUser = isOn,
+        ),
         const SizedBox(height: 35),
         SliderSetting(
           text: 'Send notifications every',
-          labeling: (days) => '$days days',
           labelOffset: const Offset(-10, 0),
+          labeling: (days) => '$days days',
+          onChanged: (days) => settings.notifyAfterDays = days,
           divisions: 10,
         ),
         const SizedBox(height: 20),
         SliderSetting(
           text: 'Preferred notification time',
-          labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
           labelOffset: const Offset(-7, 0),
+          labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
+          onChanged: (hours) => settings.notifyAtHour = hours,
           divisions: 24,
         ),
       ],
@@ -39,12 +51,14 @@ class SliderSetting extends StatefulWidget {
   final double divisions;
   final Offset labelOffset;
   final String Function(int) labeling;
+  final Function(int) onChanged;
 
   const SliderSetting({
     Key? key,
     required this.text,
     required this.labeling,
     required this.divisions,
+    required this.onChanged,
     this.labelOffset = Offset.zero,
     this.initialValue = 0,
   }) : super(key: key);
@@ -64,10 +78,7 @@ class _SliderSettingState extends State<SliderSetting> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    double width = MediaQuery.of(context).size.width;
     double divisionOffset = (width - 80) / widget.divisions;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +96,10 @@ class _SliderSettingState extends State<SliderSetting> {
               max: widget.divisions,
               divisions: widget.divisions.round(),
               inactiveColor: HexColor.lightGray.get(),
-              onChanged: (value) => setState(() => _value = value),
+              onChanged: (value) {
+                setState(() => _value = value);
+                widget.onChanged(_value.round());
+              },
             ),
           ),
         ),
@@ -104,13 +118,15 @@ class _SliderSettingState extends State<SliderSetting> {
 }
 
 class ToggleSetting extends StatefulWidget {
+  final Function(bool) onChanged;
   final String text;
-  final bool isInitiallyOn;
+  final bool isOn;
 
   const ToggleSetting({
     Key? key,
+    required this.onChanged,
     required this.text,
-    this.isInitiallyOn = false,
+    this.isOn = false,
   }) : super(key: key);
 
   @override
@@ -123,7 +139,7 @@ class _ToggleSettingState extends State<ToggleSetting> {
   @override
   void initState() {
     super.initState();
-    _isOn = widget.isInitiallyOn;
+    _isOn = widget.isOn;
   }
 
   @override
@@ -134,7 +150,10 @@ class _ToggleSettingState extends State<ToggleSetting> {
         const Spacer(),
         InkWell(
           borderRadius: BorderRadius.circular(25),
-          onTap: () => setState(() => _isOn = !_isOn),
+          onTap: () {
+            setState(() => _isOn = !_isOn);
+            widget.onChanged(_isOn);
+          },
           child: Container(
             width: 50,
             height: 25,

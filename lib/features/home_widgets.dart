@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:save_my_food/common/text.dart';
-import 'package:save_my_food/features/food_inventory.dart';
 import 'package:save_my_food/theme.dart';
 
-import 'product.dart';
-import 'profile.dart';
+import 'food_inventory/inventory.dart';
+import 'food_inventory/inventory_view.dart';
+import 'food_inventory/product.dart';
 
-class WidgetsPage extends StatelessWidget {
-  final Function(int) navigateTo;
+class HomeWidgetsPage extends StatelessWidget {
+  final Function() onInventory;
+  final Function() onScanReceipt;
 
-  const WidgetsPage({Key? key, required this.navigateTo}) : super(key: key);
+  const HomeWidgetsPage({
+    Key? key,
+    required this.onInventory,
+    required this.onScanReceipt,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Profile profile = context.read<Profile>();
+    Inventory profile = context.read<Inventory>();
     return Container(
       color: HexColor.pink.get(),
       padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
@@ -28,17 +33,19 @@ class WidgetsPage extends StatelessWidget {
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               ButtonWidget(
                 text: 'Inventory',
                 image: 'assets/images/inventory.png',
-                offset: Offset(3, 0),
+                offset: const Offset(3, 0),
+                onTap: onInventory,
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               ButtonWidget(
                 text: 'Scan receipt',
                 image: 'assets/images/scan.png',
-                offset: Offset(3, 0),
+                offset: const Offset(3, 0),
+                onTap: onScanReceipt,
               ),
             ],
           ),
@@ -61,7 +68,8 @@ class WidgetsPage extends StatelessWidget {
                   size: 16),
               SizedBox(height: 15),
               NormalText(
-                  'It would take a tree 2 months to negate this waste. Be more careful with your food waste!',
+                  'It would take a tree 2 months to negate this waste. '
+                  'Be more careful with your food waste!',
                   size: 16),
             ],
           ),
@@ -122,28 +130,33 @@ class ButtonWidget extends StatelessWidget {
   final String text;
   final String image;
   final Offset offset;
-
+  final Function() onTap;
+  
   const ButtonWidget({
     Key? key,
     required this.text,
     required this.image,
+    required this.onTap,
     this.offset = Offset.zero,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: WidgetBox(
-        height: 150,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Transform.translate(
-              offset: offset,
-              child: Image.asset(image, height: 90),
-            ),
-            WidgetText(text),
-          ],
+      child: InkWell(
+        onTap: onTap,
+        child: WidgetBox(
+          height: 150,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Transform.translate(
+                offset: offset,
+                child: Image.asset(image, height: 90),
+              ),
+              WidgetText(text),
+            ],
+          ),
         ),
       ),
     );
@@ -187,7 +200,11 @@ class WidgetText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NormalText(text,
-        size: 20, color: HexColor.red.get(), weight: FontWeight.w700);
+    return NormalText(
+      text,
+      color: HexColor.red.get(),
+      weight: FontWeight.w700,
+      size: 20,
+    );
   }
 }
