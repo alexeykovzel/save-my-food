@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:save_my_food/common/text.dart';
 import 'package:save_my_food/theme.dart';
 
-import 'food_inventory/inventory.dart';
-import 'food_inventory/inventory_view.dart';
-import 'food_inventory/product.dart';
+import 'product/inventory.dart';
+import 'product/product.dart';
+import 'product/product_list.dart';
 
 class HomeWidgetsPage extends StatelessWidget {
   final Function() onInventory;
@@ -19,7 +19,7 @@ class HomeWidgetsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Inventory profile = context.read<Inventory>();
+    Inventory inventory = context.read<Inventory>();
     return Container(
       color: HexColor.pink.get(),
       padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
@@ -54,7 +54,7 @@ class HomeWidgetsPage extends StatelessWidget {
             text: 'Products that expire soon:',
             children: [
               const SizedBox(height: 15),
-              ...profile.expireSoon
+              ...inventory.expireSoon
                   .map((product) => ExpiresSoonItem(product: product))
             ],
           ),

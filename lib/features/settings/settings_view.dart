@@ -18,11 +18,13 @@ class SettingsViewPage extends StatelessWidget {
         ToggleSetting(
           text: 'Remove expired products',
           onChanged: (isOn) => settings.deleteExpired = isOn,
+          isOn: settings.deleteExpired,
         ),
         const SizedBox(height: 35),
         ToggleSetting(
           text: 'Turn on notifications',
           onChanged: (isOn) => settings.notifyUser = isOn,
+          isOn: settings.notifyUser,
         ),
         const SizedBox(height: 35),
         SliderSetting(
@@ -30,6 +32,7 @@ class SettingsViewPage extends StatelessWidget {
           labelOffset: const Offset(-10, 0),
           labeling: (days) => '$days days',
           onChanged: (days) => settings.notifyAfterDays = days,
+          initialValue: settings.notifyAfterDays.toDouble(),
           divisions: 10,
         ),
         const SizedBox(height: 20),
@@ -38,6 +41,7 @@ class SettingsViewPage extends StatelessWidget {
           labelOffset: const Offset(-7, 0),
           labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
           onChanged: (hours) => settings.notifyAtHour = hours,
+          initialValue: settings.notifyAtHour.toDouble(),
           divisions: 24,
         ),
       ],

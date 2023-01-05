@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:save_my_food/theme.dart';
 
 class LoadingHandler extends StatefulWidget {
-  final Widget Function(BuildContext, dynamic) builder;
-  final Widget Function() loading;
   final Future Function() future;
+  final Widget Function() loading;
+  final Widget Function(BuildContext, dynamic) builder;
 
   const LoadingHandler({
     Key? key,
-    required this.builder,
-    required this.loading,
     required this.future,
+    required this.loading,
+    required this.builder,
   }) : super(key: key);
 
   @override
@@ -34,6 +34,22 @@ class _LoadingHandlerState extends State<LoadingHandler> {
           snapshot.connectionState == ConnectionState.done
               ? widget.builder(context, snapshot.data)
               : widget.loading(),
+    );
+  }
+}
+
+class CircularLoadingPage extends StatelessWidget {
+  const CircularLoadingPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: CircularProgressIndicator(
+          color: HexColor.pink.get(),
+        ),
+      ),
     );
   }
 }

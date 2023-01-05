@@ -1,8 +1,8 @@
 import 'package:camera/camera.dart';
-import 'package:save_my_food/features/food_inventory/product.dart';
+import 'package:save_my_food/features/product/product.dart';
 
 class ReceiptScanner {
-  static Future<List<Product>> scan(CameraImage receipt) async {
+  static Future<List<Product>> scan(XFile receipt) async {
     return [
       Product('Product 1', expiresBy: daysAgo(2)),
       Product('Product 2', expiresBy: daysAgo(3)),

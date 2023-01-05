@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:save_my_food/theme.dart';
 
-import 'features/food_inventory/inventory.dart';
 import 'features/home.dart';
+import 'features/product/inventory.dart';
+import 'features/product/product_view.dart';
 import 'features/settings/settings.dart';
 
 class MyApp extends StatelessWidget {

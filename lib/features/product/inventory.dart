@@ -26,7 +26,12 @@ class Inventory with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct(Product product) {
+  void addProduct(Product product) {
+    _savedProducts.add(product);
+    notifyListeners();
+  }
+  
+  void removeProduct(Product product) {
     _savedProducts.remove(product);
     notifyListeners();
   }
