@@ -3,12 +3,12 @@ SaveMyFood is a cross-platform mobile application for grocery management. it kee
 
 ### For Android users
 
-First, download flutter: https://docs.flutter.dev/get-started/install
+First, download flutter from here: https://docs.flutter.dev/get-started/install. 
 Then, to build an APK for Android, run the following command:
 ```
 sh apk-build.sh
 ```
-The file will be located at:
+The launcher will be located at:
 save_my_food/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
 
 ### For IOS users
