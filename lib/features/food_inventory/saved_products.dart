@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 
 import 'product.dart';
 
-class Inventory with ChangeNotifier {
-  List<Product> _savedProducts = [];
+class SavedProducts with ChangeNotifier {
+  final List<Product> _products = [];
 
-  Inventory() {
-    _savedProducts.addAll([
+  SavedProducts() {
+    _products.addAll([
       Product('Beef', expiresBy: daysAgo(2)),
       Product('Smoke Fi Taco', expiresBy: daysAgo(3)),
       Product('Bananas', expiresBy: daysAgo(4)),
@@ -17,22 +17,17 @@ class Inventory with ChangeNotifier {
     ]);
   }
 
-  List<Product> get products => _savedProducts;
+  List<Product> get all => _products;
 
-  List<Product> get expireSoon => _savedProducts.sublist(0, 3);
+  List<Product> get expireSoon => _products.sublist(0, 3);
 
-  set products(List<Product> products) {
-    _savedProducts = products;
+  void add(Product product) {
+    _products.add(product);
     notifyListeners();
   }
 
-  void addProduct(Product product) {
-    _savedProducts.add(product);
-    notifyListeners();
-  }
-  
-  void removeProduct(Product product) {
-    _savedProducts.remove(product);
+  void remove(Product product) {
+    _products.remove(product);
     notifyListeners();
   }
 

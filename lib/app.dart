@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:save_my_food/theme.dart';
 
 import 'features/home.dart';
-import 'features/product/inventory.dart';
-import 'features/product/product_view.dart';
+import 'features/food_inventory/saved_products.dart';
 import 'features/settings/settings.dart';
 
 class MyApp extends StatelessWidget {
@@ -14,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => Inventory()),
+        ChangeNotifierProvider(create: (_) => SavedProducts()),
         ChangeNotifierProvider(create: (_) => Settings()),
       ],
       child: MaterialApp(

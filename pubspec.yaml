@@ -13,18 +13,18 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.2.13
-  provider: ^6.0.1
+  cupertino_icons: ^1.0.2
   flutter_svg: ^1.1.6
-  intl: ^0.18.0
+  provider: ^6.0.1
   camera: ^0.10.1
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # Configured in analysis_options.yaml
+  flutter_launcher_icons: ^0.11.0
   flutter_lints: ^2.0.0
 
 flutter:
@@ -33,6 +33,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/corners/
+    - assets/images/logo/
     - assets/font/
 
   fonts:
@@ -51,12 +52,20 @@ flutter:
 
 flutter_native_splash:
   color: '#FF6C6C'
-  image: assets/images/logo.png
-
-  android_12:
-    image: assets/images/logo.png
-    icon_background_color: '#FF6C6C'
-
-  android_gravity: center
-
+  image: assets/images/logo/logo_1152x1152.png
+  android: true
   web: false
+  ios: true
+
+  # Configure native splash for android
+  android_gravity: center
+  android_12:
+    icon_background_color: '#FF6C6C'
+    image: assets/images/logo/logo_1152x1152.png
+
+# Configure launcher icon
+flutter_icons:
+  android: launcher_icon
+  image_path: assets/images/logo/logo_843x827.jpg
+  min_sdk_android: 21
+  ios: true

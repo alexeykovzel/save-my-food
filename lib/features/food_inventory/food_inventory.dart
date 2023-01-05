@@ -3,27 +3,27 @@ import 'package:provider/provider.dart';
 import 'package:save_my_food/common/input.dart';
 import 'package:save_my_food/common/routes.dart';
 
-import 'inventory.dart';
+import 'saved_products.dart';
 import 'product_list.dart';
 import 'product_view.dart';
 
-class InventoryViewPage extends StatelessWidget {
-  const InventoryViewPage({Key? key}) : super(key: key);
+class FoodInventoryPage extends StatelessWidget {
+  const FoodInventoryPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Inventory>(
-      builder: (context, inventory, child) => ProductListPage(
+    return Consumer<SavedProducts>(
+      builder: (context, products, child) => ProductListPage(
         title: 'Food Inventory',
-        products: inventory.products,
-        onItemRemove: inventory.removeProduct,
+        products: products.all,
+        onItemRemove: products.remove,
         floatingButton: FloatingButton(
           text: 'Add product',
           onPressed: () => Routes.pushRightLeft(
             context,
             ProductViewPage(
               onSave: (context, product) {
-                context.read<Inventory>().addProduct(product);
+                context.read<SavedProducts>().add(product);
                 Navigator.pop(context);
               },
               saveText: 'Create',

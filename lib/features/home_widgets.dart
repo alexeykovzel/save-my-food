@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:save_my_food/common/text.dart';
 import 'package:save_my_food/theme.dart';
 
-import 'product/inventory.dart';
-import 'product/product.dart';
-import 'product/product_list.dart';
+import 'food_inventory/saved_products.dart';
+import 'food_inventory/product.dart';
+import 'food_inventory/product_list.dart';
 
 class HomeWidgetsPage extends StatelessWidget {
   final Function() onInventory;
@@ -19,16 +19,20 @@ class HomeWidgetsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Inventory inventory = context.read<Inventory>();
+    SavedProducts inventory = context.read<SavedProducts>();
     return Container(
       color: HexColor.pink.get(),
-      padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
+      padding: const EdgeInsets.only(left: 40, right: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const Spacer(),
           Align(
             alignment: Alignment.center,
-            child: Image.asset('assets/images/logo.png', width: 160),
+            child: Image.asset(
+              'assets/images/logo/logo_548x508.png',
+              width: 160,
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -73,6 +77,7 @@ class HomeWidgetsPage extends StatelessWidget {
                   size: 16),
             ],
           ),
+          const SizedBox(height: 30),
         ],
       ),
     );
@@ -131,7 +136,7 @@ class ButtonWidget extends StatelessWidget {
   final String image;
   final Offset offset;
   final Function() onTap;
-  
+
   const ButtonWidget({
     Key? key,
     required this.text,

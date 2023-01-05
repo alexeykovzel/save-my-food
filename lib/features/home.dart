@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:save_my_food/common/text.dart';
-import 'package:save_my_food/features/receipt/scan_receipt.dart';
+import 'package:save_my_food/features/scan_receipt/scan_receipt.dart';
 import 'package:save_my_food/features/settings/settings_view.dart';
 import 'package:save_my_food/features/home_widgets.dart';
 import 'package:save_my_food/theme.dart';
 
-import 'product/inventory_view.dart';
+import 'food_inventory/food_inventory.dart';
 
 class HomePage extends StatefulWidget {
   static const route = '/';
@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final List<Widget> _pages;
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void navigateTo(int index) {
     setState(() => _selectedIndex = index);
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       ScanReceiptPage(
         onInventory: () => navigateTo(2),
       ),
-      const InventoryViewPage(),
+      const FoodInventoryPage(),
       const SettingsViewPage(),
     ];
   }

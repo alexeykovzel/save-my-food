@@ -23,6 +23,7 @@ class ProductListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    products.sort((a, b) => a.daysLeft < b.daysLeft ? 0 : 1);
     return NormalLayout(
       title: title,
       floating: floatingButton,
@@ -38,12 +39,18 @@ class ProductListPage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        ...products.map(
-          (product) => ProductItem(
-            product: product,
-            onDelete: () => onItemRemove(product),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ...products.map((product) => ProductItem(
+                      product: product,
+                      onDelete: () => onItemRemove(product),
+                    ))
+              ],
+            ),
           ),
-        ),
+        )
       ],
     );
   }

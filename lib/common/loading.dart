@@ -38,22 +38,6 @@ class _LoadingHandlerState extends State<LoadingHandler> {
   }
 }
 
-class CircularLoadingPage extends StatelessWidget {
-  const CircularLoadingPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: CircularProgressIndicator(
-          color: HexColor.pink.get(),
-        ),
-      ),
-    );
-  }
-}
-
 class CircularLoading extends StatelessWidget {
   final double topPadding;
 

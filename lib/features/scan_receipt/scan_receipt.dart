@@ -5,7 +5,7 @@ import 'package:save_my_food/common/loading.dart';
 import 'package:save_my_food/common/media.dart';
 import 'package:save_my_food/common/routes.dart';
 import 'package:save_my_food/common/text.dart';
-import 'package:save_my_food/features/product/product.dart';
+import 'package:save_my_food/features/scan_receipt/failed_scan.dart';
 
 import 'confirm_scan.dart';
 import 'receipt_scanner.dart';
@@ -25,26 +25,32 @@ class ScanReceiptPage extends StatelessWidget {
       ResolutionPreset.max,
       enableAudio: false,
     );
+    controller.setFlashMode(FlashMode.off);
     await controller.initialize();
     return controller;
   }
 
   void scanReceipt(BuildContext context, CameraController camera) {
-    Routes.pushRightLeft(context, Scaffold(
-      backgroundColor: Colors.white,
-      body: LoadingHandler(
-        future: () async {
-          await Future.delayed(Duration.zero, () {}); // bruh
-          XFile receipt = await camera.takePicture();
-          return await ReceiptScanner.scan(receipt);
-        },
-        loading: () => const CircularLoading(),
-        builder: (_, products) => ConfirmScanPage(
-          products: products,
-          onInventory: onInventory,
+    Routes.pushRightLeft(
+      context,
+      Scaffold(
+        backgroundColor: Colors.white,
+        body: LoadingHandler(
+          future: () async {
+            await Future.delayed(Duration.zero, () {});
+            XFile receipt = await camera.takePicture();
+            return await ReceiptScanner.scan(receipt);
+          },
+          loading: () => const CircularLoading(),
+          builder: (_, products) => products == null
+              ? const FailedScanPage()
+              : ConfirmScanPage(
+                  scannedProducts: products,
+                  onInventory: onInventory,
+                ),
         ),
       ),
-    ));
+    );
   }
 
   List<Widget> buildCorners() {
