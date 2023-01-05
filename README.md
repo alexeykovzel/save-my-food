@@ -1,16 +1,16 @@
-# save_my_food
+# SaveMyFood
+SaveMyFood is a cross-platform mobile application for grocery management. it keeps track of expiration dates and notifies the user whenever a product is about to expire.
 
-A new Flutter project.
+### For Android users
 
-## Getting Started
+First, download flutter: https://docs.flutter.dev/get-started/install
+Then, to build an APK for Android, run the following command:
+```
+sh apk-build.sh
+```
+The file will be located at:
+save_my_food/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
 
-This project is a starting point for a Flutter application.
+### For IOS users
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Unfortunately, I need MacOS to build for IOS :(
