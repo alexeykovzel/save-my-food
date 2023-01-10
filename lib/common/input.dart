@@ -71,12 +71,14 @@ class InputField extends StatelessWidget {
 
 class DateInputField extends StatefulWidget {
   final TextEditingController controller;
+  final String initialValue;
   final String label;
   final String hint;
   final int flex;
 
   const DateInputField({
     Key? key,
+    this.initialValue = '',
     required this.controller,
     required this.label,
     required this.hint,
@@ -91,7 +93,7 @@ class _DateInputFieldState extends State<DateInputField> {
   @override
   void initState() {
     super.initState();
-    widget.controller.text = '';
+    widget.controller.text = widget.initialValue;
   }
 
   @override
@@ -111,6 +113,16 @@ class _DateInputFieldState extends State<DateInputField> {
           initialDate: DateTime.now(),
           firstDate: DateTime.now(),
           lastDate: DateTime(2101),
+          builder: (context, child) => Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: HexColor.pink.get(),
+                onPrimary: Colors.white,
+                onSurface: Colors.black,
+              ),
+            ),
+            child: child!,
+          ),
         );
         if (date != null) {
           String formattedDate = DateFormat('yyyy-MM-dd').format(date);

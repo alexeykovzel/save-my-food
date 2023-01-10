@@ -7,11 +7,17 @@ import 'product.dart';
 class ProductViewPage extends StatefulWidget {
   final Function(BuildContext, Product) onSave;
   final String saveText;
+  final String productName;
+  final String expirationDate;
+  final int quantity;
 
   const ProductViewPage({
     Key? key,
     required this.onSave,
     required this.saveText,
+    this.productName = '',
+    this.expirationDate = '',
+    this.quantity = 1,
   }) : super(key: key);
 
   @override
@@ -23,6 +29,13 @@ class _ProductViewPageState extends State<ProductViewPage> {
   final _expirationDate = TextEditingController();
   final _productName = TextEditingController();
   final _quantity = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _productName.text = widget.productName;
+    _quantity.text = widget.quantity.toString();
+  }
 
   int normalizeQuantity(String value) {
     if (value == '') return 1;
@@ -48,7 +61,7 @@ class _ProductViewPageState extends State<ProductViewPage> {
           onClose: () => Navigator.pop(context),
           floatingPadding: const EdgeInsets.only(bottom: 30),
           floating: FloatingButton(
-            text: 'Create',
+            text: widget.saveText,
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 Product product = Product(
@@ -89,6 +102,7 @@ class _ProductViewPageState extends State<ProductViewPage> {
               children: [
                 const SizedBox(height: 20),
                 DateInputField(
+                  initialValue: widget.expirationDate,
                   controller: _expirationDate,
                   label: 'Expiration date',
                   hint: '2023-01-04',

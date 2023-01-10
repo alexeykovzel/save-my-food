@@ -88,6 +88,7 @@ class NormalLayout extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final Widget? floating;
+  final EdgeInsets? contentPadding;
   final EdgeInsets? floatingPadding;
   final Function()? onClose;
 
@@ -96,6 +97,7 @@ class NormalLayout extends StatelessWidget {
     required this.title,
     required this.children,
     this.floating,
+    this.contentPadding,
     this.floatingPadding,
     this.onClose,
   }) : super(key: key);
@@ -104,16 +106,19 @@ class NormalLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 30, top: 90),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Heading(title),
-              const SizedBox(height: 40),
-              ...children,
-            ],
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 30, top: 90),
+              child: Heading(title),
+            ),
+            const SizedBox(height: 40),
+            Padding(
+              padding: contentPadding ?? const EdgeInsets.only(left: 30),
+              child: Column(children: children),
+            ),
+          ],
         ),
         if (floating != null)
           Padding(
