@@ -49,6 +49,7 @@ class SavedProducts with ChangeNotifier {
   void edit(Product product, Product newProduct) {
     for (int i = 0; i < _products.length; i++) {
       if (_products[i].id == product.id) {
+        newProduct.image = _products[i].image;
         _products[i] = newProduct;
         notifyListeners();
       }

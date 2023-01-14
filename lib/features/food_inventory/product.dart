@@ -1,9 +1,9 @@
 class Product {
   late final int id;
   final DateTime expiresBy;
-  final String? image;
   final String name;
   final int quantity;
+  String? image;
 
   static int idCounter = 0;
 

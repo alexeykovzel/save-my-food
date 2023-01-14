@@ -11,7 +11,7 @@ import 'package:save_my_food/theme.dart';
 
 import 'product.dart';
 
-class ProductListPage extends StatefulWidget {
+class ProductListPage extends StatelessWidget {
   final String title;
   final List<Product> products;
   final Widget floatingButton;
@@ -27,16 +27,23 @@ class ProductListPage extends StatefulWidget {
     this.onClose,
   }) : super(key: key);
 
-  @override
-  State<ProductListPage> createState() => _ProductListPageState();
-}
-
-class _ProductListPageState extends State<ProductListPage> {
-  void toggleView() {
-    context.read<Settings>().toggleView();
+  void onEdit(BuildContext context, Product product) {
+    Routes.pushRightLeft(
+      context,
+      ProductViewPage(
+        saveText: 'Confirm',
+        expirationDate: DateFormat('yyyy-MM-dd').format(product.expiresBy),
+        productName: product.name,
+        quantity: product.quantity,
+        onSave: (context, newProduct) {
+          context.read<SavedProducts>().edit(product, newProduct);
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 
-  Widget _rowView() {
+  Widget _rowView(BuildContext context) {
     return Column(
       children: [
         Row(
@@ -52,24 +59,11 @@ class _ProductListPageState extends State<ProductListPage> {
         SingleChildScrollView(
           child: Column(
             children: [
-              ...widget.products.map(
+              ...products.map(
                 (product) => ProductRow(
                   product: product,
-                  onDelete: () => widget.onRemove(product),
-                  onEdit: () => Routes.pushRightLeft(
-                    context,
-                    ProductViewPage(
-                      productName: product.name,
-                      expirationDate:
-                          DateFormat('yyyy-MM-dd').format(product.expiresBy),
-                      quantity: product.quantity,
-                      onSave: (context, newProduct) {
-                        context.read<SavedProducts>().edit(product, newProduct);
-                        Navigator.pop(context);
-                      },
-                      saveText: 'Confirm',
-                    ),
-                  ),
+                  onDelete: () => onRemove(product),
+                  onEdit: () => onEdit(context, product),
                 ),
               )
             ],
@@ -79,32 +73,35 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  Widget _cardView() {
+  Widget _cardView(BuildContext context) {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       physics: const ScrollPhysics(),
-      itemCount: widget.products.length,
+      itemCount: products.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 20,
         mainAxisSpacing: 20,
       ),
       itemBuilder: (BuildContext context, int index) {
-        return ProductCard(product: widget.products[index]);
+        return ProductCard(
+          product: products[index],
+          onEdit: () => onEdit(context, products[index]),
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.products.sort((a, b) => a.daysLeft < b.daysLeft ? 0 : 1);
+    products.sort((a, b) => a.daysLeft < b.daysLeft ? 0 : 1);
     return Consumer<Settings>(
       builder: (context, settings, child) => NormalLayout(
-        title: widget.title,
+        title: title,
         floating: [
-          widget.floatingButton,
+          floatingButton,
           Padding(
             padding: const EdgeInsets.only(top: 80, right: 20),
             child: Align(
@@ -114,14 +111,14 @@ class _ProductListPageState extends State<ProductListPage> {
                 children: [
                   ToggleViewButton(
                     size: 24,
-                    onPressed: toggleView,
+                    onPressed: () => context.read<Settings>().toggleView(),
                     icon: Icons.grid_view,
                     isOn: settings.cardView,
                   ),
                   const SizedBox(width: 8),
                   ToggleViewButton(
                     size: 28,
-                    onPressed: toggleView,
+                    onPressed: () => context.read<Settings>().toggleView(),
                     icon: Icons.view_list,
                     isOn: !settings.cardView,
                   ),
@@ -131,8 +128,8 @@ class _ProductListPageState extends State<ProductListPage> {
           )
         ],
         contentPadding: EdgeInsets.zero,
-        onClose: widget.onClose,
-        content: settings.cardView ? _cardView() : _rowView(),
+        onClose: onClose,
+        content: settings.cardView ? _cardView(context) : _rowView(context),
       ),
     );
   }
@@ -140,8 +137,13 @@ class _ProductListPageState extends State<ProductListPage> {
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final Function() onEdit;
 
-  const ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({
+    Key? key,
+    required this.product,
+    required this.onEdit,
+  }) : super(key: key);
 
   Color getColor(int daysLeft) {
     if (daysLeft <= 4) return HexColor.pink.get();
@@ -152,30 +154,33 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int daysLeft = product.daysLeft;
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: getColor(daysLeft), width: 2),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 15),
-            Image.network(
-              product.image ??
-                  'https://cdn-icons-png.flaticon.com/512/5184/5184592.png',
-              height: 80,
-            ),
-            const Spacer(),
-            NormalText(
-              product.name,
-              weight: FontWeight.w500,
-              overflow: TextOverflow.ellipsis,
-            ),
-            NormalText('$daysLeft days left', size: 12),
-            const SizedBox(height: 15),
-          ],
+    return InkWell(
+      onTap: onEdit,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: getColor(daysLeft), width: 2),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 15),
+              Image.network(
+                product.image ??
+                    'https://cdn-icons-png.flaticon.com/512/5184/5184592.png',
+                height: 80,
+              ),
+              const Spacer(),
+              NormalText(
+                product.name,
+                weight: FontWeight.w500,
+                overflow: TextOverflow.ellipsis,
+              ),
+              NormalText('$daysLeft days left', size: 12),
+              const SizedBox(height: 15),
+            ],
+          ),
         ),
       ),
     );
