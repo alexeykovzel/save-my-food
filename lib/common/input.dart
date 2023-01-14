@@ -133,37 +133,42 @@ class _DateInputFieldState extends State<DateInputField> {
   }
 }
 
-class FloatingButton extends StatelessWidget {
+class MainFloatingButton extends StatelessWidget {
   final String text;
   final Function() onPressed;
+  final double bottomPadding;
 
-  const FloatingButton({
+  const MainFloatingButton({
     Key? key,
     required this.text,
     required this.onPressed,
+    this.bottomPadding = 30,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(170, 0),
-          padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 30,
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(170, 0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 30,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+          onPressed: onPressed,
+          child: NormalText(
+            text,
+            weight: FontWeight.bold,
+            color: Colors.white,
+            size: 20,
           ),
-        ),
-        onPressed: onPressed,
-        child: NormalText(
-          text,
-          weight: FontWeight.bold,
-          color: Colors.white,
-          size: 20,
         ),
       ),
     );

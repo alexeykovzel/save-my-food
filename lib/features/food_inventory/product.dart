@@ -1,12 +1,18 @@
 class Product {
+  late final int id;
+  final DateTime expiresBy;
+  final String name;
+  final int quantity;
+  String? image;
+
   static int idCounter = 0;
 
-  late final int id;
-  final String name;
-  final DateTime expiresBy;
-  final int quantity;
-
-  Product(this.name, {required this.expiresBy, this.quantity = 1}) {
+  Product(
+    this.name, {
+    required this.expiresBy,
+    this.quantity = 1,
+    this.image,
+  }) {
     id = idCounter++;
   }
 

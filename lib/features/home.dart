@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final List<Widget> _pages;
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   void navigateTo(int index) {
     setState(() => _selectedIndex = index);
@@ -86,19 +86,17 @@ class _HomePageState extends State<HomePage> {
 
 class NormalLayout extends StatelessWidget {
   final String title;
-  final List<Widget> children;
-  final Widget? floating;
+  final Widget content;
+  final List<Widget>? floating;
   final EdgeInsets? contentPadding;
-  final EdgeInsets? floatingPadding;
   final Function()? onClose;
 
   const NormalLayout({
     Key? key,
     required this.title,
-    required this.children,
+    required this.content,
     this.floating,
     this.contentPadding,
-    this.floatingPadding,
     this.onClose,
   }) : super(key: key);
 
@@ -114,17 +112,14 @@ class NormalLayout extends StatelessWidget {
               child: Heading(title),
             ),
             const SizedBox(height: 40),
-            Padding(
-              padding: contentPadding ?? const EdgeInsets.only(left: 30),
-              child: Column(children: children),
+            Expanded(
+              child: Padding(
+                padding: contentPadding ?? const EdgeInsets.only(left: 30),
+                child: content,
+              ),
             ),
           ],
         ),
-        if (floating != null)
-          Padding(
-            padding: floatingPadding ?? EdgeInsets.zero,
-            child: floating!,
-          ),
         if (onClose != null)
           Padding(
             padding: const EdgeInsets.only(right: 30, top: 40),
@@ -140,6 +135,7 @@ class NormalLayout extends StatelessWidget {
               ),
             ),
           ),
+        if (floating != null) ...floating!,
       ],
     );
   }
