@@ -9,13 +9,13 @@ class SavedProducts with ChangeNotifier {
 
   SavedProducts() {
     _products.addAll([
-      Product.byDaysAgo('Beef', days: 2, quantity: 999),
-      Product.byDaysAgo('Smoke Fi Taco', days: 3),
-      Product.byDaysAgo('Bananas', days: 4),
-      Product.byDaysAgo('Soi soup', days: 6),
-      Product.byDaysAgo('Smetana', days: 10),
-      Product.byDaysAgo('Bottle Water', days: 50),
-      Product.byDaysAgo('Nutella', days: 236),
+      Product.byDaysAgo('Beef', daysAgo: 2, quantity: 999),
+      Product.byDaysAgo('Smoke Fi Taco', daysAgo: 3),
+      Product.byDaysAgo('Bananas', daysAgo: 4),
+      Product.byDaysAgo('Soi soup', daysAgo: 6),
+      Product.byDaysAgo('Smetana', daysAgo: 10),
+      Product.byDaysAgo('Bottle Water', daysAgo: 50),
+      Product.byDaysAgo('Nutella', daysAgo: 236),
     ]);
   }
 

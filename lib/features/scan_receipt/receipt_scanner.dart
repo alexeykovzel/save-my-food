@@ -33,11 +33,13 @@ class ReceiptScanner {
     String text = json['ParsedResults'][0]['ParsedText'].toUpperCase();
     List<String> rows = const LineSplitter().convert(text);
 
-    // Return null if no rows, otherwise decode receipt
-    return rows.isEmpty ? null : decodeReceipt(rows);
+    // Decode receipt by rows
+    return decodeReceipt(rows);
   }
 
   static List<Product>? decodeReceipt(List<String> rows) {
+    if (rows.isEmpty) return null;
+
     List<String> ah = ["ANTAL", "SUBTOTAAL", "STATIEGELD"];
     List<String> lidl = ["SCHR", "ANTAL", "PET"];
 
@@ -77,12 +79,12 @@ class ReceiptScanner {
     if (startOfItems != -1) rows.removeRange(0, startOfItems + 1);
 
     // Return array with scanned products
-    List<Product> result = [];
+    List<Product> products = [];
     for (var i = 0; i < rows.length; i++) {
       int daysAgo = Random().nextInt(10);
-      Product product = Product.byDaysAgo(rows[i], days: daysAgo);
-      result.add(product);
+      Product product = Product.byDaysAgo(rows[i], daysAgo: daysAgo);
+      products.add(product);
     }
-    return result;
+    return products;
   }
 }

@@ -15,12 +15,10 @@ class Product {
     id = idCounter++;
   }
 
-  static Product byDaysAgo(String name, {required int days, int? quantity}) {
-    return Product(
-      name,
-      expiresBy: DateTime.now().add(Duration(days: days + 1)),
-      quantity: quantity ?? 1,
-    );
+  static Product byDaysAgo(String name, {required int daysAgo, int? quantity}) {
+    return Product(name,
+        expiresBy: DateTime.now().add(Duration(days: daysAgo + 1)),
+        quantity: quantity ?? 1);
   }
 
   int get daysLeft => expiresBy.difference(DateTime.now()).inDays;
