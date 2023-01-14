@@ -76,7 +76,7 @@ class ProductListPage extends StatelessWidget {
 
   Widget _cardView(BuildContext context) {
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       physics: const ScrollPhysics(),
@@ -87,9 +87,11 @@ class ProductListPage extends StatelessWidget {
         mainAxisSpacing: 20,
       ),
       itemBuilder: (BuildContext context, int index) {
+        Product product = products[index];
         return ProductCard(
-          product: products[index],
-          onEdit: () => onEdit(context, products[index]),
+          product: product,
+          onEdit: () => onEdit(context, product),
+          onRemove: () => onRemove(product),
         );
       },
     );
@@ -139,51 +141,65 @@ class ProductListPage extends StatelessWidget {
 class ProductCard extends StatelessWidget {
   final Product product;
   final Function() onEdit;
+  final Function() onRemove;
 
   const ProductCard({
     Key? key,
     required this.product,
     required this.onEdit,
+    required this.onRemove,
   }) : super(key: key);
-
-  Color getColor(int daysLeft) {
-    if (daysLeft <= 4) return HexColor.pink.get();
-    if (daysLeft <= 10) return HexColor.yellow.get();
-    return HexColor.green.get();
-  }
 
   @override
   Widget build(BuildContext context) {
-    int daysLeft = product.daysLeft;
-    return InkWell(
-      onTap: onEdit,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: getColor(daysLeft), width: 2),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              LoadingImage(
-                url: product.image ??
-                    'https://cdn-icons-png.flaticon.com/512/5184/5184592.png',
-                height: 80,
+    return Stack(
+      children: [
+        InkWell(
+          onTap: onEdit,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: product.color, width: 3),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: [
+                  const SizedBox(height: 28),
+                  LoadingImage(url: product.image, height: 65),
+                  const Spacer(),
+                  NormalText(
+                    product.fullName,
+                    weight: FontWeight.w500,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  NormalText('${product.daysLeftPlus} days left', size: 12),
+                  const SizedBox(height: 15),
+                ],
               ),
-              const Spacer(),
-              NormalText(
-                product.name,
-                weight: FontWeight.w500,
-                overflow: TextOverflow.ellipsis,
-              ),
-              NormalText('$daysLeft days left', size: 12),
-              const SizedBox(height: 15),
-            ],
+            ),
           ),
         ),
-      ),
+        Transform.translate(
+          offset: const Offset(15, -15),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              color: Colors.white,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: onRemove,
+                icon: Icon(
+                  Icons.delete_forever,
+                  color: HexColor.pink.get(),
+                  size: 40,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -202,22 +218,18 @@ class ProductRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String productName =
-        '${product.quantity > 99 ? '99+' : product.quantity.toString()} '
-        '${product.name}';
+    String name = product.fullName;
     return InkWell(
       onTap: onEdit,
       child: Row(
         children: [
           const SizedBox(width: 30),
           NormalText(
-            productName.length > 20
-                ? '${productName.substring(0, 20)}...'
-                : productName,
+            name.length > 20 ? '${name.substring(0, 20)}...' : name,
             size: 18,
           ),
           const Spacer(),
-          DaysLeft(product.daysLeft),
+          DaysLeft(product),
           const SizedBox(width: 8),
           SizedBox(
             width: 50,
@@ -276,20 +288,10 @@ class ToggleViewButton extends StatelessWidget {
 }
 
 class DaysLeft extends StatelessWidget {
-  final int value;
+  final Product product;
   final double scale;
 
-  const DaysLeft(
-    this.value, {
-    Key? key,
-    this.scale = 1,
-  }) : super(key: key);
-
-  Color getColor() {
-    if (value <= 4) return HexColor.pink.get();
-    if (value <= 10) return HexColor.yellow.get();
-    return HexColor.green.get();
-  }
+  const DaysLeft(this.product, {Key? key, this.scale = 1}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -300,10 +302,10 @@ class DaysLeft extends StatelessWidget {
         height: 34,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: getColor(), width: scale < 1 ? 3 : 2),
+          border: Border.all(color: product.color, width: scale < 1 ? 3 : 2),
         ),
         child: Center(
-          child: NormalText(value > 99 ? '99+' : value.toString()),
+          child: NormalText(product.daysLeftPlus),
         ),
       ),
     );

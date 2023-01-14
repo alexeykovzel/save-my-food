@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:save_my_food/theme.dart';
+
 class Product {
   late final int id;
   DateTime expiresBy;
@@ -5,23 +8,35 @@ class Product {
   int quantity;
 
   static int idCounter = 0;
+  static String defaultImage =
+      'https://cdn-icons-png.flaticon.com/512/5184/5184592.png';
 
   Product(this.name, {required this.expiresBy, this.quantity = 1}) {
     id = idCounter++;
   }
 
-  int get daysLeft {
-    return expiresBy.difference(DateTime.now()).inDays;
-  }
+  int get daysLeft => expiresBy.difference(DateTime.now()).inDays;
 
-  String? get image {
+  String get fullName => '$quantityPlus $name';
+
+  String get daysLeftPlus => daysLeft > 99 ? '99+' : daysLeft.toString();
+
+  String get quantityPlus => quantity > 99 ? '99+' : quantity.toString();
+
+  String get image {
     String entry = name.toLowerCase();
     for (Category category in Category.values) {
       if (category.contains(entry)) {
         return category.image;
       }
     }
-    return null;
+    return defaultImage;
+  }
+
+  Color get color {
+    if (daysLeft <= 4) return HexColor.pink.get();
+    if (daysLeft <= 10) return HexColor.yellow.get();
+    return HexColor.green.get();
   }
 }
 

@@ -98,7 +98,7 @@ class ExpiresSoonItem extends StatelessWidget {
         children: [
           NormalText(product.name, color: Colors.black, size: 16),
           const Spacer(),
-          DaysLeft(product.daysLeft, scale: 0.8),
+          DaysLeft(product, scale: 0.8),
         ],
       ),
     );
