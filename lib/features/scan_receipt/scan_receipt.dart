@@ -22,7 +22,7 @@ class ScanReceiptPage extends StatelessWidget {
     List<CameraDescription> cameras = await availableCameras();
     final controller = CameraController(
       cameras[0],
-      ResolutionPreset.max,
+      ResolutionPreset.veryHigh, // API doesn't allow higher
       enableAudio: false,
     );
     await controller.initialize();
