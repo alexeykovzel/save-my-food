@@ -32,9 +32,10 @@ class SettingsViewPage extends StatelessWidget {
             text: 'Send notifications every',
             labelOffset: const Offset(-10, 0),
             labeling: (days) => '$days days',
-            onChanged: (days) => settings.notifyAfterDays = days,
+            onChanged: (days) => settings.notifyAfterDays = days + 1,
             initialValue: settings.notifyAfterDays.toDouble(),
-            divisions: 10,
+            divisions: 11,
+            offset: 1,
           ),
           const SizedBox(height: 20),
           SliderSetting(
@@ -43,7 +44,7 @@ class SettingsViewPage extends StatelessWidget {
             labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
             onChanged: (hours) => settings.notifyAtHour = hours,
             initialValue: settings.notifyAtHour.toDouble(),
-            divisions: 24,
+            divisions: 23,
           ),
         ],
       ),
@@ -55,6 +56,7 @@ class SliderSetting extends StatefulWidget {
   final String text;
   final double initialValue;
   final double divisions;
+  final double offset;
   final Offset labelOffset;
   final String Function(int) labeling;
   final Function(int) onChanged;
@@ -65,6 +67,7 @@ class SliderSetting extends StatefulWidget {
     required this.labeling,
     required this.divisions,
     required this.onChanged,
+    this.offset = 0,
     this.labelOffset = Offset.zero,
     this.initialValue = 0,
   }) : super(key: key);
@@ -86,6 +89,7 @@ class _SliderSettingState extends State<SliderSetting> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double divisionOffset = (width - 80) / widget.divisions;
+    double labelOffset = divisionOffset * (_value - widget.offset);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,7 +103,8 @@ class _SliderSettingState extends State<SliderSetting> {
             ),
             child: Slider(
               value: _value,
-              max: widget.divisions,
+              min: widget.offset,
+              max: widget.divisions + widget.offset,
               divisions: widget.divisions.round(),
               inactiveColor: HexColor.lightGray.get(),
               onChanged: (value) {
@@ -113,7 +118,7 @@ class _SliderSettingState extends State<SliderSetting> {
         Transform.translate(
           offset: widget.labelOffset,
           child: AnimatedPadding(
-            padding: EdgeInsets.only(left: divisionOffset * _value),
+            padding: EdgeInsets.only(left: labelOffset),
             duration: const Duration(milliseconds: 100),
             child: NormalText(widget.labeling(_value.round()), size: 12),
           ),

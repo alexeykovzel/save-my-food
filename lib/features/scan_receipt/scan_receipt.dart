@@ -25,8 +25,8 @@ class ScanReceiptPage extends StatelessWidget {
       ResolutionPreset.max,
       enableAudio: false,
     );
-    controller.setFlashMode(FlashMode.off);
     await controller.initialize();
+    controller.setFlashMode(FlashMode.off);
     return controller;
   }
 

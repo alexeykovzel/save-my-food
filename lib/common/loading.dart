@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:save_my_food/theme.dart';
 
@@ -53,6 +54,33 @@ class CircularLoading extends StatelessWidget {
           color: HexColor.pink.get(),
         ),
       ),
+    );
+  }
+}
+
+class LoadingImage extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final String url;
+
+  const LoadingImage({
+    Key? key,
+    this.width,
+    this.height,
+    required this.url,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedNetworkImage(
+      imageUrl: url,
+      progressIndicatorBuilder: (context, url, download) =>
+          Center(child: CircularProgressIndicator(value: download.progress)),
+      errorWidget: (context, url, error) =>
+          Icon(Icons.error, color: HexColor.pink.get(), size: 50),
+      fit: BoxFit.cover,
+      height: height,
+      width: width,
     );
   }
 }

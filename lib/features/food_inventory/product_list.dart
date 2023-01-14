@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:save_my_food/common/loading.dart';
 import 'package:save_my_food/common/routes.dart';
 import 'package:save_my_food/common/text.dart';
 import 'package:save_my_food/features/food_inventory/product_view.dart';
@@ -162,12 +163,12 @@ class ProductCard extends StatelessWidget {
           border: Border.all(color: getColor(daysLeft), width: 2),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             children: [
               const SizedBox(height: 15),
-              Image.network(
-                product.image ??
+              LoadingImage(
+                url: product.image ??
                     'https://cdn-icons-png.flaticon.com/512/5184/5184592.png',
                 height: 80,
               ),

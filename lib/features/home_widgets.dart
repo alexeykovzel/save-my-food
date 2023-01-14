@@ -41,14 +41,15 @@ class HomeWidgetsPage extends StatelessWidget {
               ButtonWidget(
                 text: 'Inventory',
                 image: 'assets/images/inventory.png',
-                offset: const Offset(3, 0),
+                imageOffset: const Offset(3, 0),
                 onTap: onInventory,
               ),
               const SizedBox(width: 20),
               ButtonWidget(
                 text: 'Scan receipt',
                 image: 'assets/images/scan.png',
-                offset: const Offset(3, 0),
+                imageOffset: const Offset(-5, 0),
+                imageHeight: 68,
                 onTap: onScanReceipt,
               ),
             ],
@@ -134,7 +135,8 @@ class NormalWidget extends StatelessWidget {
 class ButtonWidget extends StatelessWidget {
   final String text;
   final String image;
-  final Offset offset;
+  final Offset imageOffset;
+  final double imageHeight;
   final Function() onTap;
 
   const ButtonWidget({
@@ -142,7 +144,8 @@ class ButtonWidget extends StatelessWidget {
     required this.text,
     required this.image,
     required this.onTap,
-    this.offset = Offset.zero,
+    this.imageHeight = 90,
+    this.imageOffset = Offset.zero,
   }) : super(key: key);
 
   @override
@@ -155,11 +158,15 @@ class ButtonWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 15),
+              const Spacer(),
               Transform.translate(
-                offset: offset,
-                child: Image.asset(image, height: 90),
+                offset: imageOffset,
+                child: Image.asset(image, height: imageHeight),
               ),
+              const Spacer(),
               WidgetText(text),
+              const SizedBox(height: 18),
             ],
           ),
         ),
