@@ -16,6 +16,7 @@ class NormalText extends StatelessWidget {
   final Color color;
   final TextAlign? align;
   final FontWeight weight;
+  final TextOverflow? overflow;
   final double? height;
   final double? size;
 
@@ -27,6 +28,7 @@ class NormalText extends StatelessWidget {
     this.weight = FontWeight.w400,
     this.height,
     this.size,
+    this.overflow,
   }) : super(key: key);
 
   @override
@@ -36,6 +38,7 @@ class NormalText extends StatelessWidget {
       textAlign: align,
       style: TextStyle(
         fontWeight: weight,
+        overflow: overflow,
         fontSize: size,
         height: height,
         color: color,

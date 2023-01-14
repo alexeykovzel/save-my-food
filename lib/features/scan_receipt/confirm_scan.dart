@@ -35,10 +35,8 @@ class _ConfirmScanPageState extends State<ConfirmScanPage> {
     return ProductListPage(
       title: 'Food Inventory',
       products: _products,
-      onItemRemove: (product) => setState(() {
-        _products.remove(product);
-      }),
-      floatingButton: FloatingButton(
+      onRemove: (product) => setState(() => _products.remove(product)),
+      floatingButton: MainFloatingButton(
         text: 'Confirm',
         onPressed: () {
           context.read<SavedProducts>().all.addAll(_products);

@@ -16,8 +16,8 @@ class FoodInventoryPage extends StatelessWidget {
       builder: (context, products, child) => ProductListPage(
         title: 'Food Inventory',
         products: products.all,
-        onItemRemove: products.remove,
-        floatingButton: FloatingButton(
+        onRemove: products.remove,
+        floatingButton: MainFloatingButton(
           text: 'Add product',
           onPressed: () => Routes.pushRightLeft(
             context,
