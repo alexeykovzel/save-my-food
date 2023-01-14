@@ -6,15 +6,16 @@ import 'package:save_my_food/common/text.dart';
 import 'package:save_my_food/features/food_inventory/product_view.dart';
 import 'package:save_my_food/features/food_inventory/saved_products.dart';
 import 'package:save_my_food/features/home.dart';
+import 'package:save_my_food/features/settings/settings.dart';
 import 'package:save_my_food/theme.dart';
 
 import 'product.dart';
 
-class ProductListPage extends StatelessWidget {
+class ProductListPage extends StatefulWidget {
   final String title;
   final List<Product> products;
   final Widget floatingButton;
-  final Function(Product) onItemRemove;
+  final Function(Product) onRemove;
   final Function()? onClose;
 
   const ProductListPage({
@@ -22,19 +23,21 @@ class ProductListPage extends StatelessWidget {
     required this.title,
     required this.products,
     required this.floatingButton,
-    required this.onItemRemove,
+    required this.onRemove,
     this.onClose,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    products.sort((a, b) => a.daysLeft < b.daysLeft ? 0 : 1);
-    return NormalLayout(
-      title: title,
-      floating: floatingButton,
-      contentPadding: EdgeInsets.zero,
-      floatingPadding: const EdgeInsets.only(bottom: 30),
-      onClose: onClose,
+  State<ProductListPage> createState() => _ProductListPageState();
+}
+
+class _ProductListPageState extends State<ProductListPage> {
+  void toggleView() {
+    context.read<Settings>().toggleView();
+  }
+
+  Widget _rowView() {
+    return Column(
       children: [
         Row(
           children: const [
@@ -49,10 +52,10 @@ class ProductListPage extends StatelessWidget {
         SingleChildScrollView(
           child: Column(
             children: [
-              ...products.map(
-                (product) => ProductItem(
+              ...widget.products.map(
+                (product) => ProductRow(
                   product: product,
-                  onDelete: () => onItemRemove(product),
+                  onDelete: () => widget.onRemove(product),
                   onEdit: () => Routes.pushRightLeft(
                     context,
                     ProductViewPage(
@@ -71,18 +74,120 @@ class ProductListPage extends StatelessWidget {
               )
             ],
           ),
-        )
+        ),
       ],
+    );
+  }
+
+  Widget _cardView() {
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      physics: const ScrollPhysics(),
+      itemCount: widget.products.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return ProductCard(product: widget.products[index]);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    widget.products.sort((a, b) => a.daysLeft < b.daysLeft ? 0 : 1);
+    return Consumer<Settings>(
+      builder: (context, settings, child) => NormalLayout(
+        title: widget.title,
+        floating: [
+          widget.floatingButton,
+          Padding(
+            padding: const EdgeInsets.only(top: 80, right: 20),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ToggleViewButton(
+                    size: 24,
+                    onPressed: toggleView,
+                    icon: Icons.grid_view,
+                    isOn: settings.cardView,
+                  ),
+                  const SizedBox(width: 8),
+                  ToggleViewButton(
+                    size: 28,
+                    onPressed: toggleView,
+                    icon: Icons.view_list,
+                    isOn: !settings.cardView,
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+        contentPadding: EdgeInsets.zero,
+        onClose: widget.onClose,
+        content: settings.cardView ? _cardView() : _rowView(),
+      ),
     );
   }
 }
 
-class ProductItem extends StatelessWidget {
+class ProductCard extends StatelessWidget {
+  final Product product;
+
+  const ProductCard({Key? key, required this.product}) : super(key: key);
+
+  Color getColor(int daysLeft) {
+    if (daysLeft <= 4) return HexColor.pink.get();
+    if (daysLeft <= 10) return HexColor.yellow.get();
+    return HexColor.green.get();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int daysLeft = product.daysLeft;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: getColor(daysLeft), width: 2),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const SizedBox(height: 15),
+            Image.network(
+              product.image ??
+                  'https://cdn-icons-png.flaticon.com/512/5184/5184592.png',
+              height: 80,
+            ),
+            const Spacer(),
+            NormalText(
+              product.name,
+              weight: FontWeight.w500,
+              overflow: TextOverflow.ellipsis,
+            ),
+            NormalText('$daysLeft days left', size: 12),
+            const SizedBox(height: 15),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProductRow extends StatelessWidget {
   final Product product;
   final Function() onDelete;
   final Function() onEdit;
 
-  const ProductItem({
+  const ProductRow({
     Key? key,
     required this.product,
     required this.onDelete,
@@ -121,6 +226,44 @@ class ProductItem extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class ToggleViewButton extends StatelessWidget {
+  final Function() onPressed;
+  final IconData icon;
+  final double size;
+  final bool isOn;
+
+  const ToggleViewButton({
+    Key? key,
+    required this.size,
+    required this.onPressed,
+    required this.icon,
+    required this.isOn,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: BorderRadius.circular(10),
+      elevation: 4,
+      child: SizedBox(
+        width: 35,
+        height: 35,
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          highlightColor: Colors.white,
+          onPressed: onPressed,
+          splashRadius: 22,
+          icon: Icon(
+            icon,
+            color: isOn ? HexColor.pink.get() : HexColor.gray.get(),
+            size: size,
+          ),
+        ),
       ),
     );
   }

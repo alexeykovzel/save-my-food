@@ -88,7 +88,7 @@ class ScanReceiptPage extends StatelessWidget {
                 ...buildCorners(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 70),
-                  child: FloatingButton(
+                  child: MainFloatingButton(
                     text: 'Confirm',
                     onPressed: () => scanReceipt(context, camera),
                   ),

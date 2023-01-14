@@ -14,37 +14,39 @@ class SettingsViewPage extends StatelessWidget {
     Settings settings = context.read<Settings>();
     return NormalLayout(
       title: 'Settings',
-      children: [
-        ToggleSetting(
-          text: 'Remove expired products',
-          onChanged: (isOn) => settings.deleteExpired = isOn,
-          isOn: settings.deleteExpired,
-        ),
-        const SizedBox(height: 35),
-        ToggleSetting(
-          text: 'Turn on notifications',
-          onChanged: (isOn) => settings.notifyUser = isOn,
-          isOn: settings.notifyUser,
-        ),
-        const SizedBox(height: 35),
-        SliderSetting(
-          text: 'Send notifications every',
-          labelOffset: const Offset(-10, 0),
-          labeling: (days) => '$days days',
-          onChanged: (days) => settings.notifyAfterDays = days,
-          initialValue: settings.notifyAfterDays.toDouble(),
-          divisions: 10,
-        ),
-        const SizedBox(height: 20),
-        SliderSetting(
-          text: 'Preferred notification time',
-          labelOffset: const Offset(-7, 0),
-          labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
-          onChanged: (hours) => settings.notifyAtHour = hours,
-          initialValue: settings.notifyAtHour.toDouble(),
-          divisions: 24,
-        ),
-      ],
+      content: Column(
+        children: [
+          ToggleSetting(
+            text: 'Remove expired products',
+            onChanged: (isOn) => settings.deleteExpired = isOn,
+            isOn: settings.deleteExpired,
+          ),
+          const SizedBox(height: 35),
+          ToggleSetting(
+            text: 'Turn on notifications',
+            onChanged: (isOn) => settings.notifyUser = isOn,
+            isOn: settings.notifyUser,
+          ),
+          const SizedBox(height: 35),
+          SliderSetting(
+            text: 'Send notifications every',
+            labelOffset: const Offset(-10, 0),
+            labeling: (days) => '$days days',
+            onChanged: (days) => settings.notifyAfterDays = days,
+            initialValue: settings.notifyAfterDays.toDouble(),
+            divisions: 10,
+          ),
+          const SizedBox(height: 20),
+          SliderSetting(
+            text: 'Preferred notification time',
+            labelOffset: const Offset(-7, 0),
+            labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
+            onChanged: (hours) => settings.notifyAtHour = hours,
+            initialValue: settings.notifyAtHour.toDouble(),
+            divisions: 24,
+          ),
+        ],
+      ),
     );
   }
 }
