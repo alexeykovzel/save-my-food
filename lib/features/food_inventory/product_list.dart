@@ -37,7 +37,7 @@ class ProductListPage extends StatelessWidget {
         productName: product.name,
         quantity: product.quantity,
         onSave: (context, newProduct) {
-          context.read<SavedProducts>().edit(product, newProduct);
+          context.read<SavedProducts>().swap(product, newProduct);
           Navigator.pop(context);
         },
       ),
