@@ -6,16 +6,16 @@ import 'product.dart';
 
 class SavedProducts with ChangeNotifier {
   final List<Product> _products = [];
-  
+
   SavedProducts() {
     _products.addAll([
-      Product('Beef', expiresBy: daysAgo(2), quantity: 999),
-      Product('Smoke Fi Taco', expiresBy: daysAgo(3)),
-      Product('Bananas', expiresBy: daysAgo(4)),
-      Product('Soi soup', expiresBy: daysAgo(6)),
-      Product('Smetana', expiresBy: daysAgo(10)),
-      Product('Bottle Water', expiresBy: daysAgo(50)),
-      Product('Nutella', expiresBy: daysAgo(236)),
+      Product.byDaysAgo('Beef', days: 2, quantity: 999),
+      Product.byDaysAgo('Smoke Fi Taco', days: 3),
+      Product.byDaysAgo('Bananas', days: 4),
+      Product.byDaysAgo('Soi soup', days: 6),
+      Product.byDaysAgo('Smetana', days: 10),
+      Product.byDaysAgo('Bottle Water', days: 50),
+      Product.byDaysAgo('Nutella', days: 236),
     ]);
   }
 
@@ -42,9 +42,5 @@ class SavedProducts with ChangeNotifier {
         notifyListeners();
       }
     }
-  }
-
-  DateTime daysAgo(int days) {
-    return DateTime.now().add(Duration(days: days + 1));
   }
 }

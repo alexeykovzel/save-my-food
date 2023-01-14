@@ -9,96 +9,80 @@ import 'package:http/http.dart' as http;
 
 class ReceiptScanner {
   static Future<List<Product>?> scan(var receipt) async {
-    //receive detected and cleaned up text
-    return scanAPI(receipt);
-  }
-
-  static DateTime daysAgo(int days) {
-    return DateTime.now().add(Duration(days: days + 1));
-  }
-
-  static Future<List<Product>?> scanAPI(XFile receipt) async {
-    //changing image to be of type File and translating it to img64 format image
+    // Change image type to File and translate it to base 64
     File image = File(receipt.path);
     var bytes = image.readAsBytesSync();
     String img64 = base64Encode(bytes);
 
-    //creating body of POST request
-    var requestBody = {
-      "base64Image": "data:image/jpg;base64,${img64.toString()}",
-      'OCREngine': '2',
-      'isTable': 'true',
-    };
-
-    //sending POST request to OCR API
+    // Send POST request to OCR API
     var response = await http.post(
-        Uri.parse('https://api.ocr.space/parse/image'),
-        headers: {'apikey': 'K86623584688957'},
-        body: requestBody);
-    if (response.statusCode == 200) {
-      // checking if the status code is OK, if so: decode JSON
-      var responseJson = jsonDecode(response.body);
+      Uri.parse('https://api.ocr.space/parse/image'),
+      headers: {'apikey': 'K86623584688957'},
+      body: {
+        "base64Image": "data:image/jpg;base64,$img64",
+        'OCREngine': '2',
+        'isTable': 'true',
+      },
+    );
 
-      //creating a list with all scanned lines
-      LineSplitter ls = new LineSplitter();
-      List<String> items = ls.convert(
-          responseJson['ParsedResults'][0]['ParsedText'].toUpperCase());
+    // Return null if request is not successful
+    if (response.statusCode != 200) return null;
 
-      if (items.isNotEmpty) {
-        List<String> AH = ["ANTAL", "SUBTOTAAL", "STATIEGELD"];
-        List<String> LIDL = ["SCHR", "ANTAL", "PET"];
+    // Get scanned rows from API response
+    var json = jsonDecode(response.body);
+    String text = json['ParsedResults'][0]['ParsedText'].toUpperCase();
+    List<String> rows = const LineSplitter().convert(text);
 
-        //finding items to remove and post processing lines
-        int startOfItems = -1;
-        int endOfItems = -1;
-        int length = items.length;
-        for (var i = 0; i < length; i++) {
-          if ((items[i].contains(AH[0]) || items[i].contains(LIDL[0])) &&
-              startOfItems == -1) {
-            startOfItems = i;
-          } else if ((items[i].contains(AH[1]) || items[i].contains(LIDL[1])) &&
-              endOfItems == -1) {
-            endOfItems = i;
-          } else if (items[i].contains(AH[2]) || items[i].contains(LIDL[2])) {
-            items.removeAt(i);
-            length--;
-            i--;
-            if (endOfItems != -1) {
-              endOfItems -= 1;
-            }
-          }
-          if (items[i][0] == " ") {
-            items[i] = items[i].substring(1);
-          }
-          if (double.tryParse(items[i][0]) != null) {
-            items[i] = items[i].substring(2);
-          }
-        }
+    // Return null if no rows, otherwise decode receipt
+    return rows.isEmpty ? null : decodeReceipt(rows);
+  }
 
-        if (startOfItems == -1 && endOfItems == -1) {
-          return null;
-        }
+  static List<Product>? decodeReceipt(List<String> rows) {
+    List<String> ah = ["ANTAL", "SUBTOTAAL", "STATIEGELD"];
+    List<String> lidl = ["SCHR", "ANTAL", "PET"];
 
-        //removing the information before and after the items
+    // Find items to remove and post process rows
+    int startOfItems = -1;
+    int endOfItems = -1;
+    int length = rows.length;
+    for (var i = 0; i < length; i++) {
+      if ((rows[i].contains(ah[0]) || rows[i].contains(lidl[0])) &&
+          startOfItems == -1) {
+        startOfItems = i;
+      } else if ((rows[i].contains(ah[1]) || rows[i].contains(lidl[1])) &&
+          endOfItems == -1) {
+        endOfItems = i;
+      } else if (rows[i].contains(ah[2]) || rows[i].contains(lidl[2])) {
+        rows.removeAt(i);
+        length--;
+        i--;
         if (endOfItems != -1) {
-          items.removeRange(endOfItems, items.length);
+          endOfItems -= 1;
         }
-        if (startOfItems != -1) {
-          items.removeRange(0, startOfItems + 1);
-        }
-
-        //creating a list with all the scanned items
-        List<Product> result = [];
-        for (var i = 0; i < items.length; i++) {
-          result
-              .add(Product(items[i], expiresBy: daysAgo(Random().nextInt(10))));
-        }
-
-        return result;
+      }
+      if (rows[i][0] == " ") {
+        rows[i] = rows[i].substring(1);
+      }
+      if (double.tryParse(rows[i][0]) != null) {
+        rows[i] = rows[i].substring(2);
       }
     }
 
-    //if no items are found in the scan or if the POST doesn't respond with 200
-    return null;
+    if (startOfItems == -1 && endOfItems == -1) {
+      return null;
+    }
+
+    // Remove information before and after items
+    if (endOfItems != -1) rows.removeRange(endOfItems, rows.length);
+    if (startOfItems != -1) rows.removeRange(0, startOfItems + 1);
+
+    // Return array with scanned products
+    List<Product> result = [];
+    for (var i = 0; i < rows.length; i++) {
+      int daysAgo = Random().nextInt(10);
+      Product product = Product.byDaysAgo(rows[i], days: daysAgo);
+      result.add(product);
+    }
+    return result;
   }
 }

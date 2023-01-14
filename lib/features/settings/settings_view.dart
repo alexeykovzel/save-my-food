@@ -11,42 +11,52 @@ class SettingsViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Settings settings = context.read<Settings>();
-    return NormalLayout(
-      title: 'Settings',
-      content: Column(
-        children: [
-          ToggleSetting(
-            text: 'Remove expired products',
-            onChanged: (isOn) => settings.deleteExpired = isOn,
-            isOn: settings.deleteExpired,
-          ),
-          const SizedBox(height: 35),
-          ToggleSetting(
-            text: 'Turn on notifications',
-            onChanged: (isOn) => settings.notifyUser = isOn,
-            isOn: settings.notifyUser,
-          ),
-          const SizedBox(height: 35),
-          SliderSetting(
-            text: 'Send notifications every',
-            labelOffset: const Offset(-10, 0),
-            labeling: (days) => '$days days',
-            onChanged: (days) => settings.notifyAfterDays = days + 1,
-            initialValue: settings.notifyAfterDays.toDouble(),
-            divisions: 11,
-            offset: 1,
-          ),
-          const SizedBox(height: 20),
-          SliderSetting(
-            text: 'Preferred notification time',
-            labelOffset: const Offset(-7, 0),
-            labeling: (hours) => '${hours < 10 ? '0' : ''}$hours:00',
-            onChanged: (hours) => settings.notifyAtHour = hours,
-            initialValue: settings.notifyAtHour.toDouble(),
-            divisions: 23,
-          ),
-        ],
+    return Consumer<Settings>(
+      builder: (context, settings, child) => NormalLayout(
+        title: 'Settings',
+        content: Column(
+          children: [
+            ToggleSetting(
+              text: 'Remove expired products',
+              onChanged: (isOn) => settings.deleteExpired = isOn,
+              isOn: settings.deleteExpired,
+            ),
+            const SizedBox(height: 35),
+            ToggleSetting(
+              text: 'Turn on notifications',
+              onChanged: (isOn) => settings.notifyUser = isOn,
+              isOn: settings.notifyUser,
+            ),
+            const SizedBox(height: 35),
+            SliderSetting(
+              text: 'Send notifications every',
+              labelOffset: const Offset(-10, 0),
+              labeling: (days) => '$days days',
+              onChanged: (days) => settings.notifyAfterDays = days + 1,
+              initialValue: settings.notifyAfterDays.toDouble(),
+              divisions: 11,
+              offset: 1,
+            ),
+            const SizedBox(height: 20),
+            SliderSetting(
+              text: 'Preferred notification hour',
+              labelOffset: const Offset(-7, 0),
+              labeling: (hours) => settings.notifyAt,
+              onChanged: (hours) => settings.notifyAtHour = hours,
+              initialValue: settings.notifyAtHour.toDouble(),
+              divisions: 23,
+            ),
+            const SizedBox(height: 20),
+            SliderSetting(
+              text: 'Preferred notification minute',
+              labelOffset: const Offset(-7, 0),
+              labeling: (minutes) => settings.notifyAt,
+              onChanged: (minutes) => settings.notifyAtMinute = minutes,
+              initialValue: settings.notifyAtMinute.toDouble(),
+              divisions: 60,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -119,7 +129,7 @@ class _SliderSettingState extends State<SliderSetting> {
           offset: widget.labelOffset,
           child: AnimatedPadding(
             padding: EdgeInsets.only(left: labelOffset),
-            duration: const Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 90),
             child: NormalText(widget.labeling(_value.round()), size: 12),
           ),
         ),

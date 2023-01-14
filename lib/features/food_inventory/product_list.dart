@@ -188,6 +188,7 @@ class ProductCard extends StatelessWidget {
             child: Container(
               color: Colors.white,
               child: IconButton(
+                splashRadius: 0.1,
                 padding: EdgeInsets.zero,
                 onPressed: onRemove,
                 icon: Icon(
