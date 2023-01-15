@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    NotificationManager.initialize();
     _pages = [
       HomeWidgetsPage(
         onInventory: () => navigateTo(2),

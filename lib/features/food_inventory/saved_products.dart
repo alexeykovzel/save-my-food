@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 
 import 'product.dart';
+import 'package:save_my_food/features/notifications/notification_scheduler.dart';
 
 class SavedProducts with ChangeNotifier {
   final List<Product> _products = [];
@@ -28,6 +29,8 @@ class SavedProducts with ChangeNotifier {
       Product('Bottle Water', expiresBy: daysAgo(50), image: bottleImage),
       Product('Nutella', expiresBy: daysAgo(236), image: sweetImage),
     ]);
+
+    NotificationScheduler.init(_products);
   }
 
   List<Product> get all => _products;
@@ -39,11 +42,13 @@ class SavedProducts with ChangeNotifier {
   void add(Product product) {
     _products.add(product);
     notifyListeners();
+    NotificationScheduler.adjustNotificationCarriedData();
   }
 
   void remove(Product product) {
     _products.remove(product);
     notifyListeners();
+    NotificationScheduler.adjustNotificationCarriedData();
   }
 
   void edit(Product product, Product newProduct) {
@@ -54,6 +59,7 @@ class SavedProducts with ChangeNotifier {
         notifyListeners();
       }
     }
+    NotificationScheduler.adjustNotificationCarriedData();
   }
 
   DateTime daysAgo(int days) {
