@@ -6,6 +6,7 @@ import 'package:save_my_food/features/home_widgets.dart';
 import 'package:save_my_food/theme.dart';
 
 import 'food_inventory/food_inventory.dart';
+import 'notifications/notifications.dart';
 
 class HomePage extends StatefulWidget {
   static const route = '/';
