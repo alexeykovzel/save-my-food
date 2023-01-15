@@ -14,55 +14,59 @@ class NotificationScheduler {
     await notification.initialize();
   }
 
+  static void test() {
+    notification.showNotification(title: "TEST", body: "Test notification");
+  }
+
   static void cancelAll() {
     notification.cancelAll();
   }
 
   static void adjustNotificationCarriedData() {
     int? daysBeforeNotification = notification.lastConfiguredScheduledDayGap;
+    tz.TZDateTime? newScheduleDate = notification.timestamp;
 
-    if (daysBeforeNotification == null) {
+    if (newScheduleDate == null || daysBeforeNotification == null) {
       return;
     }
 
-    tz.TZDateTime newScheduleDate = tz.TZDateTime.now(tz.local);
-    int? offset;
-    if (notification.timestamp != null) {
-      newScheduleDate = notification.timestamp!;
-      offset = tz.TZDateTime.now(tz.local).difference(notification.timestamp!).inDays;
-      daysBeforeNotification = daysBeforeNotification - offset;
-    }
-
     String title = "Don't forget about your groceries";
-    String data = _calculateExpiredProducts(daysBeforeNotification);
+    String data = _calculateExpiredProducts();
 
     cancelAll();
-    notification.createNotification(title: title, body: data, scheduledDate: newScheduleDate, scheduledDayGap: notification.lastConfiguredScheduledDayGap!, isReschedule: false);
+    notification.createNotification(
+      title: title,
+      body: data,
+      scheduledDate: newScheduleDate,
+      scheduledDayGap: daysBeforeNotification,
+      isReschedule: false);
   }
 
   static void rescheduleNotification(int scheduledHour, int scheduledMinute, int scheduledDayGap) {
     tz.TZDateTime currentTime = tz.TZDateTime.now(tz.local);
+    Time newTime = Time(scheduledHour, scheduledMinute, 0);
+
     tz.TZDateTime newScheduleDate = tz.TZDateTime(
       tz.local,
       currentTime.year,
       currentTime.month,
       currentTime.day,
-      Time(scheduledHour, scheduledMinute).hour,
-      Time(scheduledHour, scheduledMinute).minute,
-      Time(scheduledHour, scheduledMinute).second
+      newTime.hour - 1,
+      newTime.minute,
+      newTime.second
     );
     String title = "Don't forget about your groceries";
-    String data = _calculateExpiredProducts(scheduledDayGap);
+    String data = _calculateExpiredProducts();
 
     cancelAll();
     notification.createNotification(title: title, body: data, scheduledDate: newScheduleDate, scheduledDayGap: scheduledDayGap, isReschedule: true);
   }
 
-  static String _calculateExpiredProducts(int daysBeforeNotification) {
+  static String _calculateExpiredProducts() {
     if (productList != null) {
       int counter = 0;
       for (int i = 0; i < productList!.length; i++) {
-        if (productList![i].daysLeft - daysBeforeNotification <= 2) {
+        if (productList![i].daysLeft <= 2) {
           counter++;
         }
       }

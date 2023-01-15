@@ -2,6 +2,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'dart:developer';
+
 class ScheduledNotification {
   final _notificationsAPI = FlutterLocalNotificationsPlugin();
   int _idCounter = 0;
@@ -22,7 +24,8 @@ class ScheduledNotification {
         'channel 1',
         'productsToExpire',
         importance: Importance.max,
-        priority: Priority.max
+        priority: Priority.max,
+        playSound: true
       ),
     );
   }
@@ -46,12 +49,7 @@ class ScheduledNotification {
   }) async {
     _idCounter++;
     _lastConfiguredScheduledDayGap = scheduledDayGap;
-    if (_lastNotificationTimestamp == null) {
-      _lastNotificationTimestamp = tz.TZDateTime.now(tz.local);
-    } else {
-      int daysPast = tz.TZDateTime.now(tz.local).difference(_lastNotificationTimestamp!).inDays;
-      _lastNotificationTimestamp = daysPast >= scheduledDayGap || isReschedule ? tz.TZDateTime.now(tz.local) : _lastNotificationTimestamp;
-    }
+    _lastNotificationTimestamp = scheduledDate;
 
     return _notificationsAPI.zonedSchedule(
       _idCounter,
@@ -61,13 +59,14 @@ class ScheduledNotification {
       await _notificationDetails(),
       payload: payload,
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
     );
   }
 
   tz.TZDateTime _scheduleNotification(tz.TZDateTime scheduleDate, dayGap) {
     final currentTime = tz.TZDateTime.now(tz.local);
+    // log("scheduled: ${scheduleDate.isBefore(currentTime) ? scheduleDate.add(Duration(days: dayGap)).toString() : scheduleDate.toString()}");
+    // log("current: ${currentTime.add(const Duration(seconds: 2))}");
     return scheduleDate.isBefore(currentTime) ? scheduleDate.add(Duration(days: dayGap)) : scheduleDate;
   }
 

@@ -5,8 +5,8 @@ import 'dart:developer';
 class Settings with ChangeNotifier {
   bool _cardView = true;
   bool deleteExpired = true;
-  bool notifyUser = false;
-  int notifyAfterDays = 4;
+  bool _notifyUser = false;
+  int _notifyAfterDays = 4;
   int _notifyAtMinute = 10;
   int _notifyAtHour = 3;
 
@@ -15,6 +15,7 @@ class Settings with ChangeNotifier {
   set notifyAtMinute(int minute) {
     _notifyAtMinute = minute;
     notifyListeners();
+    rescheduleNotifications();
   }
 
   int get notifyAtHour => _notifyAtHour;
@@ -22,6 +23,7 @@ class Settings with ChangeNotifier {
   set notifyAtHour(int hour) {
     _notifyAtHour = hour;
     notifyListeners();
+    rescheduleNotifications();
   }
 
   String get notifyAt =>
@@ -39,37 +41,28 @@ class Settings with ChangeNotifier {
     return _notifyAfterDays;
   }
 
-  int get notifyAtHour {
-    return _notifyAtHour;
+  set notifyAfterDays(int days) {
+    _notifyAfterDays = days;
+    rescheduleNotifications();
   }
 
   bool get notifyUser {
     return _notifyUser;
   }
 
-  void rescheduleNotifications() {
-    NotificationScheduler.cancelAll();
-    if (_notifyUser) {
-      NotificationScheduler.rescheduleNotification(_notifyAtHour, 0, _notifyAfterDays);
-    }
-  }
-
-  void changeNotificationDayGap(int days) {
-    _notifyAfterDays = days;
-    rescheduleNotifications();
-  }
-
-  void changeNotificationHour(int hour) {
-    _notifyAtHour = hour;
-    rescheduleNotifications();
-  }
-
-  void switchNotifyUserOption(bool notifyUser) {
-    _notifyUser = notifyUser;
+  set notifyUser (bool isOn) {
+    _notifyUser = isOn;
     if (!_notifyUser) {
       NotificationScheduler.cancelAll();
     } else {
       rescheduleNotifications();
+    }
+  }
+
+  void rescheduleNotifications() {
+    NotificationScheduler.cancelAll();
+    if (_notifyUser) {
+      NotificationScheduler.rescheduleNotification(_notifyAtHour, _notifyAtMinute, _notifyAfterDays);
     }
   }
 }
