@@ -59,7 +59,13 @@ class NotificationScheduler {
     String data = _calculateExpiredProducts();
 
     cancelAll();
-    notification.createNotification(title: title, body: data, scheduledDate: newScheduleDate, scheduledDayGap: scheduledDayGap, isReschedule: true);
+    notification.createNotification(
+      title: title,
+      body: data,
+      scheduledDate: newScheduleDate,
+      scheduledDayGap: scheduledDayGap,
+      isReschedule: true
+    );
   }
 
   static String _calculateExpiredProducts() {

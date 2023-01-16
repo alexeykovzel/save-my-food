@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -65,9 +66,21 @@ class ScheduledNotification {
 
   tz.TZDateTime _scheduleNotification(tz.TZDateTime scheduleDate, dayGap) {
     final currentTime = tz.TZDateTime.now(tz.local);
-    // log("scheduled: ${scheduleDate.isBefore(currentTime) ? scheduleDate.add(Duration(days: dayGap)).toString() : scheduleDate.toString()}");
-    // log("current: ${currentTime.add(const Duration(seconds: 2))}");
-    return scheduleDate.isBefore(currentTime) ? scheduleDate.add(Duration(days: dayGap)) : scheduleDate;
+    String day = "today";
+
+    if (scheduleDate.isBefore(currentTime)) {
+      scheduleDate = scheduleDate.add(Duration(days: dayGap));
+      day = DateFormat('EEEE').format(scheduleDate);
+    }
+
+    showNotification(
+        title: "Notification scheduled",
+        body: "Reminder set on: $day, ${scheduleDate.hour}:${scheduleDate.minute}"
+    );
+
+    // log("scheduled: ${scheduleDate.toString()}");
+    // log("current: $currentTime");
+    return scheduleDate;
   }
 
   void cancelAll() {
