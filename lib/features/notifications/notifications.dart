@@ -76,7 +76,7 @@ class ScheduledNotification {
     if (toPrint) {
       showNotification(
           title: "Notification scheduled",
-          body: "Reminder set on: $day, ${scheduleDate.hour}:${scheduleDate.minute}"
+          body: "Reminder set on: $day, ${scheduleDate.hour + 1}:${scheduleDate.minute}"
       );
     }
 
