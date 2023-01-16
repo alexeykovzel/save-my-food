@@ -56,7 +56,7 @@ class ScheduledNotification {
       _idCounter,
       title,
       body,
-      _scheduleNotification(scheduledDate, scheduledDayGap),
+      _scheduleNotification(scheduledDate, scheduledDayGap, isReschedule),
       await _notificationDetails(),
       payload: payload,
       androidAllowWhileIdle: true,
@@ -64,7 +64,7 @@ class ScheduledNotification {
     );
   }
 
-  tz.TZDateTime _scheduleNotification(tz.TZDateTime scheduleDate, dayGap) {
+  tz.TZDateTime _scheduleNotification(tz.TZDateTime scheduleDate, int dayGap, bool toPrint) {
     final currentTime = tz.TZDateTime.now(tz.local);
     String day = "today";
 
@@ -73,10 +73,12 @@ class ScheduledNotification {
       day = DateFormat('EEEE').format(scheduleDate);
     }
 
-    showNotification(
-        title: "Notification scheduled",
-        body: "Reminder set on: $day, ${scheduleDate.hour}:${scheduleDate.minute}"
-    );
+    if (toPrint) {
+      showNotification(
+          title: "Notification scheduled",
+          body: "Reminder set on: $day, ${scheduleDate.hour}:${scheduleDate.minute}"
+      );
+    }
 
     // log("scheduled: ${scheduleDate.toString()}");
     // log("current: $currentTime");
