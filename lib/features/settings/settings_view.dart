@@ -15,6 +15,7 @@ class SettingsViewPage extends StatelessWidget {
       builder: (context, settings, child) => NormalLayout(
         title: 'Settings',
         content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ToggleSetting(
               text: 'Remove expired products',
@@ -38,22 +39,45 @@ class SettingsViewPage extends StatelessWidget {
               offset: 1,
             ),
             const SizedBox(height: 20),
-            SliderSetting(
-              text: 'Preferred notification hour',
-              labelOffset: const Offset(-7, 0),
-              labeling: (hours) => settings.notifyAt,
-              onChanged: (hours) => settings.notifyAtHour = hours,
-              initialValue: settings.notifyAtHour.toDouble(),
-              divisions: 23,
-            ),
-            const SizedBox(height: 20),
-            SliderSetting(
-              text: 'Preferred notification minute',
-              labelOffset: const Offset(-7, 0),
-              labeling: (minutes) => settings.notifyAt,
-              onChanged: (minutes) => settings.notifyAtMinute = minutes,
-              initialValue: settings.notifyAtMinute.toDouble(),
-              divisions: 60,
+            Row(
+              children: [
+                const NormalText('Preferred notification time:'),
+                const Spacer(),
+                InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    showTimePicker(
+                      initialTime: TimeOfDay.now(),
+                      context: context,
+                      builder: (context, child) => Theme(
+                        data: ThemeData.light().copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: HexColor.pink.get(),
+                            onSurface: HexColor.pink.get(),
+                          ),
+                        ),
+                        child: child!,
+                      ),
+                    ).then((time) {
+                      if (time == null) return;
+                      settings.notifyAtHour = time.hour;
+                      settings.notifyAtMinute = time.minute;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: HexColor.pink.get(), width: 3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: NormalText(settings.notifyAt),
+                  ),
+                ),
+                const SizedBox(width: 20),
+              ],
             ),
           ],
         ),
