@@ -2,39 +2,71 @@ import 'dart:math';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:save_my_food/features/food_inventory/product.dart';
 
 import 'package:http/http.dart' as http;
 
+bool firstFail = true;
+int scanmode = 2;
+//1 actual API
+//2 LIDL
+//3 AH
+
 class ReceiptScanner {
   static Future<List<Product>?> scan(var receipt) async {
-    // Change image type to File and translate it to base 64
-    File image = File(receipt.path);
-    var bytes = image.readAsBytesSync();
-    String img64 = base64Encode(bytes);
+    if (firstFail) {
+      firstFail = false;
+      return null;
+    }
 
-    // Send POST request to OCR API
-    var response = await http.post(
-      Uri.parse('https://api.ocr.space/parse/image'),
-      headers: {'apikey': 'K86623584688957'},
-      body: {
-        "base64Image": "data:image/jpg;base64,$img64",
-        'OCREngine': '2',
-        'isTable': 'true',
-      },
-    );
+    if (scanmode == 1) {
+      // Change image type to File and translate it to base 64
+      File image = File(receipt.path);
+      var bytes = image.readAsBytesSync();
+      String img64 = base64Encode(bytes);
 
-    // Return null if request is not successful
-    if (response.statusCode != 200) return null;
+      // Send POST request to OCR API
+      var response = await http.post(
+        Uri.parse('https://api.ocr.space/parse/image'),
+        headers: {'apikey': 'K86623584688957'},
+        body: {
+          "base64Image": "data:image/jpg;base64,$img64",
+          'OCREngine': '1',
+          'isTable': 'true',
+        },
+      );
 
-    // Get scanned rows from API response
-    var json = jsonDecode(response.body);
-    String text = json['ParsedResults'][0]['ParsedText'].toUpperCase();
-    List<String> rows = const LineSplitter().convert(text);
+      // Return null if request is not successful
+      if (response.statusCode != 200) return null;
 
-    // Decode receipt by rows
-    return decodeReceipt(rows);
+      // Get scanned rows from API response
+      var json = jsonDecode(response.body);
+      String text = json['ParsedResults'][0]['ParsedText'].toUpperCase();
+      List<String> rows = const LineSplitter().convert(text);
+
+      // Decode receipt by rows
+      return decodeReceipt(rows);
+    } else if (scanmode == 2) {
+      List<Product> products = [];
+      products.add(Product.byDaysAgo("CROISSANT HAM/KAAS",
+          daysAgo: Random().nextInt(10)));
+      products.add(Product.byDaysAgo("VEG. FOCACCIA PIZZA",
+          daysAgo: Random().nextInt(10)));
+      products.add(Product.byDaysAgo("SMOOTHIS MANGO-PASSIE",
+          daysAgo: Random().nextInt(10)));
+      return products;
+    } else if (scanmode == 3) {
+      List<Product> products = [];
+      products.add(
+          Product.byDaysAgo("APPLE BANDIT", daysAgo: Random().nextInt(10)));
+      products
+          .add(Product.byDaysAgo("LAY'S OVEN", daysAgo: Random().nextInt(10)));
+      products
+          .add(Product.byDaysAgo("HAVERDRANK", daysAgo: Random().nextInt(10)));
+      products
+          .add(Product.byDaysAgo("OET PIZZA", daysAgo: Random().nextInt(10)));
+      return products;
+    }
   }
 
   static List<Product>? decodeReceipt(List<String> rows) {
