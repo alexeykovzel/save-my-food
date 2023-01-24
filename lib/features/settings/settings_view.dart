@@ -52,8 +52,10 @@ class SettingsViewPage extends StatelessWidget {
                       builder: (context, child) => Theme(
                         data: ThemeData.light().copyWith(
                           colorScheme: ColorScheme.light(
+                            onPrimary: Colors.white,
                             primary: HexColor.pink.get(),
-                            onSurface: HexColor.pink.get(),
+                            onSurface: HexColor.gray.get(),
+                            surface: Colors.white,
                           ),
                         ),
                         child: child!,

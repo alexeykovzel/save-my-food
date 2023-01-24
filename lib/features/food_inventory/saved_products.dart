@@ -9,17 +9,16 @@ class SavedProducts with ChangeNotifier {
   final List<Product> _products = [];
 
   SavedProducts() {
+    NotificationScheduler.init(_products);
     _products.addAll([
-      Product.byDaysAgo('Beef', daysAgo: 2, quantity: 999),
-      Product.byDaysAgo('Smoke Fi Taco', daysAgo: 3),
-      Product.byDaysAgo('Bananas', daysAgo: 4),
+      Product.byDaysAgo('Dolphin', daysAgo: 2, quantity: 1),
+      Product.byDaysAgo('Bread', daysAgo: 3),
+      Product.byDaysAgo('Bananas', daysAgo: 5, quantity: 5),
       Product.byDaysAgo('Soi soup', daysAgo: 6),
-      Product.byDaysAgo('Smetana', daysAgo: 10),
-      Product.byDaysAgo('Bottle Water', daysAgo: 50),
+      Product.byDaysAgo('Cheese', daysAgo: 10),
+      Product.byDaysAgo('Bottle Water', daysAgo: 50, quantity: 2),
       Product.byDaysAgo('Nutella', daysAgo: 236),
     ]);
-
-    NotificationScheduler.init(_products);
   }
 
   List<Product> get all => _products;
@@ -30,23 +29,25 @@ class SavedProducts with ChangeNotifier {
 
   void add(Product product) {
     _products.add(product);
-    notifyListeners();
-    NotificationScheduler.adjustNotificationCarriedData();
+    update();
   }
 
   void remove(Product product) {
     _products.remove(product);
-    notifyListeners();
-    NotificationScheduler.adjustNotificationCarriedData();
+    update();
   }
 
   void swap(Product product, Product newProduct) {
     for (int i = 0; i < _products.length; i++) {
       if (_products[i].id == product.id) {
         _products[i] = newProduct;
-        notifyListeners();
+        update();
       }
     }
+  }
+
+  void update() {
     NotificationScheduler.adjustNotificationCarriedData();
+    notifyListeners();
   }
 }

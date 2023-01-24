@@ -2,74 +2,76 @@ import 'dart:math';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:save_my_food/features/food_inventory/product.dart';
 
 import 'package:http/http.dart' as http;
 
-bool firstFail = true;
-int scanmode = 2;
-//1 actual API
-//2 LIDL
-//3 AH
+bool _firstFail = false;
 
 class ReceiptScanner {
-  static Future<List<Product>?> scan(var receipt) async {
-    if (firstFail) {
-      firstFail = false;
-      return null;
-    }
-
-    if (scanmode == 1) {
-      // Change image type to File and translate it to base 64
-      File image = File(receipt.path);
-      var bytes = image.readAsBytesSync();
-      String img64 = base64Encode(bytes);
-
-      // Send POST request to OCR API
-      var response = await http.post(
-        Uri.parse('https://api.ocr.space/parse/image'),
-        headers: {'apikey': 'K86623584688957'},
-        body: {
-          "base64Image": "data:image/jpg;base64,$img64",
-          'OCREngine': '1',
-          'isTable': 'true',
-        },
-      );
-
-      // Return null if request is not successful
-      if (response.statusCode != 200) return null;
-
-      // Get scanned rows from API response
-      var json = jsonDecode(response.body);
-      String text = json['ParsedResults'][0]['ParsedText'].toUpperCase();
-      List<String> rows = const LineSplitter().convert(text);
-
-      // Decode receipt by rows
-      return decodeReceipt(rows);
-    } else if (scanmode == 2) {
-      List<Product> products = [];
-      products.add(Product.byDaysAgo("CROISSANT HAM/KAAS",
-          daysAgo: Random().nextInt(10)));
-      products.add(Product.byDaysAgo("VEG. FOCACCIA PIZZA",
-          daysAgo: Random().nextInt(10)));
-      products.add(Product.byDaysAgo("SMOOTHIS MANGO-PASSIE",
-          daysAgo: Random().nextInt(10)));
-      return products;
-    } else if (scanmode == 3) {
-      List<Product> products = [];
-      products.add(
-          Product.byDaysAgo("APPLE BANDIT", daysAgo: Random().nextInt(10)));
-      products
-          .add(Product.byDaysAgo("LAY'S OVEN", daysAgo: Random().nextInt(10)));
-      products
-          .add(Product.byDaysAgo("HAVERDRANK", daysAgo: Random().nextInt(10)));
-      products
-          .add(Product.byDaysAgo("OET PIZZA", daysAgo: Random().nextInt(10)));
-      return products;
-    }
+  static Future<List<Product>?> scan(XFile receipt) async {
+    // return _apiScan(receipt);
+    // return _testLidlScan();
+    return _testAhScan();
   }
 
-  static List<Product>? decodeReceipt(List<String> rows) {
+  static List<Product>? _testLidlScan() => _testScan([
+        'SMOOTHIS MANGO-PASSIE',
+        'VEG. FOCACCIA PIZZA',
+        'CROISSANT HAM/KAAS',
+      ]);
+
+  static List<Product>? _testAhScan() => _testScan([
+        'APPLE BANDIT',
+        'LAY\'S OVEN',
+        'HAVERDRANK',
+        'OET PIZZA',
+      ]);
+
+  static List<Product>? _testScan(List<String> products) {
+    if (!_firstFail) {
+      return products
+          .map((product) => Product.byDaysAgo(
+                _capitalize(product),
+                daysAgo: Random().nextInt(10),
+              ))
+          .toList();
+    }
+    _firstFail = false;
+    return null;
+  }
+
+  static Future<List<Product>?> _apiScan(XFile receipt) async {
+    // Change image type to File and translate it to base 64
+    File image = File(receipt.path);
+    var bytes = image.readAsBytesSync();
+    String img64 = base64Encode(bytes);
+
+    // Send POST request to OCR API
+    var response = await http.post(
+      Uri.parse('https://api.ocr.space/parse/image'),
+      headers: {'apikey': 'K86623584688957'},
+      body: {
+        "base64Image": "data:image/jpg;base64,$img64",
+        'OCREngine': '1',
+        'isTable': 'true',
+      },
+    );
+
+    // Return null if request is not successful
+    if (response.statusCode != 200) return null;
+
+    // Get scanned rows from API response
+    var json = jsonDecode(response.body);
+    String text = json['ParsedResults'][0]['ParsedText'].toUpperCase();
+    List<String> rows = const LineSplitter().convert(text);
+
+    // Decode receipt by rows
+    return _decodeReceipt(rows);
+  }
+
+  static List<Product>? _decodeReceipt(List<String> rows) {
     if (rows.isEmpty) return null;
 
     List<String> ah = ["ANTAL", "SUBTOTAAL", "STATIEGELD"];
@@ -114,9 +116,14 @@ class ReceiptScanner {
     List<Product> products = [];
     for (var i = 0; i < rows.length; i++) {
       int daysAgo = Random().nextInt(10);
-      Product product = Product.byDaysAgo(rows[i], daysAgo: daysAgo);
+      String name = _capitalize(rows[i]);
+      Product product = Product.byDaysAgo(name, daysAgo: daysAgo);
       products.add(product);
     }
     return products;
+  }
+
+  static String _capitalize(String name) {
+    return '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
   }
 }

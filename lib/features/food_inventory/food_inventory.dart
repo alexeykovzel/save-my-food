@@ -10,6 +10,19 @@ import 'product_view.dart';
 class FoodInventoryPage extends StatelessWidget {
   const FoodInventoryPage({Key? key}) : super(key: key);
 
+  void openAddProduct(BuildContext context) {
+    Routes.pushRightLeft(
+      context,
+      ProductViewPage(
+        onSave: (context, product) {
+          context.read<SavedProducts>().add(product);
+          Navigator.pop(context);
+        },
+        saveText: 'Create',
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SavedProducts>(
@@ -18,18 +31,12 @@ class FoodInventoryPage extends StatelessWidget {
         products: products.all,
         onRemove: products.remove,
         floatingButton: MainFloatingButton(
+          onPressed: () => openAddProduct(context),
           text: 'Add product',
-          onPressed: () => Routes.pushRightLeft(
-            context,
-            ProductViewPage(
-              onSave: (context, product) {
-                context.read<SavedProducts>().add(product);
-                Navigator.pop(context);
-              },
-              saveText: 'Create',
-            ),
-          ),
         ),
+        onEdit: (product, newProduct) {
+          context.read<SavedProducts>().swap(product, newProduct);
+        },
       ),
     );
   }

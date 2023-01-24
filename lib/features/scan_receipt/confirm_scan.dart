@@ -44,6 +44,13 @@ class _ConfirmScanPageState extends State<ConfirmScanPage> {
           Navigator.pop(context);
         },
       ),
+      onEdit: (product, newProduct) {
+        for (int i = 0; i < _products.length; i++) {
+          if (_products[i].id == product.id) {
+            setState(() => _products[i] = newProduct);
+          }
+        }
+      },
     );
   }
 }

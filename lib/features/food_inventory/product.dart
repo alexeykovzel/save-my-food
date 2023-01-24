@@ -27,7 +27,11 @@ class Product {
 
   String get daysLeftPlus => daysLeft > 99 ? '99+' : daysLeft.toString();
 
-  String get quantityPlus => quantity > 99 ? '99+' : quantity.toString();
+  String get quantityPlus {
+    if (quantity == 1) return '';
+    if (quantity > 99) return '99+';
+    return quantity.toString();
+  }
 
   String get image {
     String entry = name.toLowerCase();
@@ -56,6 +60,12 @@ enum Category {
   beverages,
   cereal,
   soup,
+  cheese,
+  pizza,
+  croissant,
+  apple,
+  cocktail,
+  chips,
 }
 
 extension CategoryDetails on Category {
@@ -65,6 +75,8 @@ extension CategoryDetails on Category {
 
   String get _pattern {
     switch (this) {
+      case Category.apple:
+        return 'apple';
       case Category.fruits:
         return 'fruit|banana|grape|orange|strawberry|avocado|peach|pear';
       case Category.vegetables:
@@ -72,7 +84,7 @@ extension CategoryDetails on Category {
       case Category.meat:
         return 'meat|beef|pork|poultry|chicken';
       case Category.fish:
-        return 'fish|crab|clam|tuna|salmon|tilapia|shrimp';
+        return 'fish|crab|clam|tuna|salmon|tilapia|shrimp|dolphin';
       case Category.snacks:
         return 'snack|nutella|chips|popcorn|peanut|candy';
       case Category.bread:
@@ -83,6 +95,16 @@ extension CategoryDetails on Category {
         return 'cereal|oat|rice|wheat|granola';
       case Category.soup:
         return 'soup';
+      case Category.cheese:
+        return 'cheese';
+      case Category.pizza:
+        return 'pizza';
+      case Category.croissant:
+        return 'croissant';
+      case Category.cocktail:
+        return 'cocktail|smoothi';
+      case Category.chips:
+        return 'chip|lay\'s|lays';
     }
   }
 
@@ -106,6 +128,18 @@ extension CategoryDetails on Category {
         return 'https://www.freepnglogos.com/uploads/rice-png/chinese-rice-and-chopsticks-best-web-clipart-18.png';
       case Category.soup:
         return 'https://www.freepnglogos.com/uploads/noodles-png/noodles-icon-noodles-icons-softiconsm-14.png';
+      case Category.cheese:
+        return 'https://www.freepnglogos.com/uploads/cheese-png/the-watonga-cheese-festival-fun-for-the-whole-family-0.png';
+      case Category.pizza:
+        return 'https://images.vexels.com/media/users/3/262561/isolated/preview/d4e8a9986c2b7eb249a5f57b6684615a-food-pizza-meal.png';
+      case Category.croissant:
+        return 'https://www.freepnglogos.com/uploads/croissant-png/png-croissant-hq-image-28.png';
+      case Category.apple:
+        return 'https://static.vecteezy.com/system/resources/previews/008/506/545/original/apple-fruit-cartoon-png.png';
+      case Category.cocktail:
+        return 'https://static.wikia.nocookie.net/clubpenguin/images/a/a2/Smoothie.png/revision/latest/scale-to-width-down/170?cb=20120829042649';
+      case Category.chips:
+        return 'https://www.freepnglogos.com/uploads/potato-chips-png/potato-chips-utz-quality-foods-american-snack-brand-est-28.png';
     }
   }
 }

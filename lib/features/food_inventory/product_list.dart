@@ -16,6 +16,7 @@ class ProductListPage extends StatelessWidget {
   final String title;
   final List<Product> products;
   final Widget floatingButton;
+  final Function(Product, Product) onEdit;
   final Function(Product) onRemove;
   final Function()? onClose;
 
@@ -25,10 +26,11 @@ class ProductListPage extends StatelessWidget {
     required this.products,
     required this.floatingButton,
     required this.onRemove,
+    required this.onEdit,
     this.onClose,
   }) : super(key: key);
 
-  void onEdit(BuildContext context, Product product) {
+  void openEdit(BuildContext context, Product product) {
     Routes.pushRightLeft(
       context,
       ProductViewPage(
@@ -37,7 +39,7 @@ class ProductListPage extends StatelessWidget {
         productName: product.name,
         quantity: product.quantity,
         onSave: (context, newProduct) {
-          context.read<SavedProducts>().swap(product, newProduct);
+          onEdit(product, newProduct);
           Navigator.pop(context);
         },
       ),
@@ -64,7 +66,7 @@ class ProductListPage extends StatelessWidget {
                 (product) => ProductRow(
                   product: product,
                   onDelete: () => onRemove(product),
-                  onEdit: () => onEdit(context, product),
+                  onEdit: () => openEdit(context, product),
                 ),
               )
             ],
@@ -90,7 +92,7 @@ class ProductListPage extends StatelessWidget {
         Product product = products[index];
         return ProductCard(
           product: product,
-          onEdit: () => onEdit(context, product),
+          onEdit: () => openEdit(context, product),
           onRemove: () => onRemove(product),
         );
       },

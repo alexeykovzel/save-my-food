@@ -74,8 +74,8 @@ class LoadingImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: url,
-      progressIndicatorBuilder: (context, url, download) =>
-          Center(child: CircularProgressIndicator(value: download.progress)),
+      // progressIndicatorBuilder: (context, url, download) =>
+      //     Center(child: CircularProgressIndicator(value: download.progress)),
       errorWidget: (context, url, error) =>
           Icon(Icons.error, color: HexColor.pink.get(), size: 50),
       fit: BoxFit.cover,
